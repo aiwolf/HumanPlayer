@@ -92,6 +92,7 @@ public class GUIRoleRequestStarter {
 					for(Role role:Role.values()){
 						System.out.println(role);
 					}
+					return;
 				}
 			}
 		}
@@ -111,34 +112,22 @@ public class GUIRoleRequestStarter {
 		
 		start(playerMap, logDir, new DefaultResource());
 	}
-
+	
 	/**
-	 * 一人のRoleを指定してDirectに実行
-	 * @param player
-	 * @param role
-	 * @param playerNum
-	 * @param defaultClsName
+	 * すべてのプレイヤーインスタンスとそのRoleを設定して開始
+	 * @param playerMap
 	 * @param logDir
-	 * @throws InstantiationException
-	 * @throws IllegalAccessException
-	 * @throws ClassNotFoundException
 	 * @throws IOException
 	 */
-	public static void start(Player player, Role role, int playerNum, String defaultClsName, String logDir, AIWolfResource resource) throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException{
-		Map<Player, Role> playerMap = new LinkedHashMap<Player, Role>();
-
-		playerMap.put(new AgentGUI(player), role);
-		while(playerMap.size() < playerNum){
-			playerMap.put((Player) Class.forName(defaultClsName).newInstance(), null);
-		}
-		start(playerMap, logDir, resource);
+	public static void start(Map<Player, Role> playerMap, String logDir) throws IOException {
+		start(playerMap, logDir, new DefaultResource());
 	}
 	
 	/**
 	 * すべてのプレイヤーインスタンスとそのRoleを設定して開始
-	 * @param playerNum
 	 * @param playerMap
 	 * @param logDir
+	 * @param resource AIWolfResourceを指定．日本語ならJapaneseResourceを指定．
 	 * @throws IOException
 	 */
 	public static void start(Map<Player, Role> playerMap, String logDir, AIWolfResource resource) throws IOException {

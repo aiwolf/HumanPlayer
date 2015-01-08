@@ -2,6 +2,10 @@ package org.aiwolf.client.ui.res;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.ImageIcon;
@@ -25,10 +29,98 @@ import org.aiwolf.common.util.Counter;
  */
 public class DefaultResource implements AIWolfResource {
 
+	String[][] agentResourceAry = {
+			{"Oliver", "img/00_body.png"}, 
+			{"Deicle", "img/01_body.png"}, 
+			{"Lenox", "img/02_body.png"}, 
+			{"Traise", "img/03_body.png"}, 
+			{"Dylany", "img/04_body.png"}, 
+			{"Jerico", "img/05_body.png"}, 
+			{"Safira", "img/06_body.png"}, 
+			{"Birkley", "img/07_body.png"}, 
+			{"Rodelic", "img/08_body.png"}, 
+			{"Monty", "img/09_body.png"}, 
+			{"Rinsy", "img/10_body.png"}, 
+			{"Dacota", "img/11_body.png"}, 
+			{"Masha", "img/12_body.png"}, 
+			{"Kypling", "img/13_body.png"}, 
+			{"Chazz", "img/14_body.png"}, 
+			{"Tory", "img/15_body.png"}, 
+			{"Tatton", "img/16_body.png"}, 
+			{"Marinda", "img/17_body.png"}, 
+			{"Randal", "img/18_body.png"}, 
+			{"Nikky", "img/19_body.png"}, 
+			{"Reginald", "img/20_body.png"}, 
+			{"Michael", "img/21_body.png"}, 
+			{"Rusias", "img/22_body.png"}, 
+			{"Joakim", "img/23_body.png"}, 
+			{"Casalina", "img/24_body.png"}, 
+			{"Clare", "img/25_body.png"}, 
+			{"Ted", "img/26_body.png"}, 
+			{"Garda", "img/27_body.png"}, 
+			{"Ku", "img/28_body.png"}, 
+			{"Pink", "img/29_body.png"}, 
+			{"Tom", "img/30_body.png"}, 
+			{"Chrif", "img/31_body.png"}, 
+			{"Alexey", "img/32_body.png"}, 
+			{"Eimy", "img/33_body.png"}, 
+			{"Jack", "img/34_body.png"}, 
+			{"Catherine", "img/35_body.png"}, 
+			{"Blenda", "img/36_body.png"}, 
+			{"Pierre", "img/37_body.png"}, 
+			{"Chocola", "img/38_body.png"}, 
+			{"Zak", "img/39_body.png"}, 
+			{"Emet", "img/40_body.png"}, 
+			{"Emit", "img/41_body.png"}, 
+			{"Sarah", "img/42_body.png"}, 
+			{"Boss", "img/43_body.png"}, 
+			{"Kino", "img/44_body.png"}, 
+			{"Monica", "img/45_body.png"}, 
+			{"Denis", "img/46_body.png"}, 
+			{"Camus", "img/47_body.png"}, 
+			{"Yurie", "img/48_body.png"}, 
+			{"Norah", "img/49_body.png"}, 
+			{"Barbara", "img/50_body.png"}, 
+			{"Chercy", "img/51_body.png"}, 
+			{"Cherio", "img/52_body.png"}, 
+			{"Guen", "img/53_body.png"}, 
+			{"Lyza", "img/54_body.png"}, 
+			{"Beth", "img/55_body.png"}, 
+			{"Walker", "img/56_body.png"}, 
+			{"Mary", "img/57_body.png"}, 
+			{"Maxris", "img/58_body.png"}, 
+			{"Kanabis", "img/59_body.png"}, 
+			{"Hach", "img/60_body.png"}, 
+			{"Marble", "img/61_body.png"}, 
+			{"Peace", "img/62_body.png"}, 
+			{"Doc", "img/63_body.png"}, 
+			{"Meries", "img/64_body.png"}, 
+			{"Fran", "img/65_body.png"}, 
+			{"Higras", "img/66_body.png"}, 
+			{"Ivan", "img/67_body.png"}, 
+			{"Tao", "img/68_body.png"}, 
+			{"Jima", "img/69_body.png"}, 
+			{"Tanya", "img/70_body.png"}, 
+			{"Jonnie", "img/71_body.png"}, 
+			{"Lindberg", "img/72_body.png"}, 
+	};
+	
 	BidiMap<Agent, String> bidiMap = new BidiMap<>();
+	List<String[]> agentResourceList;
+		
+	public DefaultResource(){
+		agentResourceList = Arrays.asList(agentResourceAry);
+		Collections.shuffle(agentResourceList);
+
+		bidiMap = new BidiMap<>();
+	}
 	
 	@Override
 	public String convert(Agent agent) {
+//		String name = agentResourceList.get(agent.getAgentIdx())[0];
+//		bidiMap.put(agent, name);
+		
+//		String.format("%s%02d", agent.toString(), agent.getAgentIdx());
 		bidiMap.put(agent, agent.toString());
 		return agent.toString();
 	}
@@ -71,8 +163,7 @@ public class DefaultResource implements AIWolfResource {
 
 	@Override
 	public String convertGuarded(Agent guardedAgent) {
-		// TODO 自動生成されたメソッド・スタブ
-		return null;
+		return String.format("%s guarded", convert(guardedAgent));
 	}
 
 	@Override
@@ -112,7 +203,13 @@ public class DefaultResource implements AIWolfResource {
 
 	@Override
 	public ImageIcon getImageIcon(Agent agent) {
-		return new ImageIcon(new BufferedImage(1, 1, Image.SCALE_SMOOTH));
+		String imageUrl = agentResourceList.get(agent.getAgentIdx())[1];
+//		System.out.println(imageUrl+"\t"+agentResourceList.get(agent.getAgentIdx())[0]);
+		URL url=getClass().getClassLoader().getResource(imageUrl);
+		ImageIcon icon = new ImageIcon(url);
+		return icon;
+//
+//		return new ImageIcon(new BufferedImage(1, 1, Image.SCALE_SMOOTH));
 	}
 
 	public String convertWinner(Team winner){

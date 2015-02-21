@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.aiwolf.client.base.smpl.SampleRoleAssignPlayer;
 import org.aiwolf.client.ui.HumanPlayer;
+import org.aiwolf.client.ui.res.DefaultResource;
 import org.aiwolf.client.ui.res.JapaneseResource;
 import org.aiwolf.common.data.Role;
 import org.aiwolf.server.bin.RoleRequestStarter;
@@ -27,7 +28,8 @@ public class HumanPlayerStarter {
 	public static void main(String[] args) throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException {
 //		Role role = null;
 		Role role = Role.WEREWOLF;
-		HumanPlayer humanPlayer = new HumanPlayer(new JapaneseResource());
+//		HumanPlayer humanPlayer = new HumanPlayer(new JapaneseResource());
+		HumanPlayer humanPlayer = new HumanPlayer(new DefaultResource());
 		String defaultClassName = SampleRoleAssignPlayer.class.getName();
 //		String defaultClassName = InabaPlayer.class.getName();
 //		String logDir = null;

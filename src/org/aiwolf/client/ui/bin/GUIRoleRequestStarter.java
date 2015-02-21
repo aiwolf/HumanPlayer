@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -12,10 +11,9 @@ import java.util.Random;
 import org.aiwolf.client.ui.AgentGUI;
 import org.aiwolf.client.ui.res.AIWolfResource;
 import org.aiwolf.client.ui.res.DefaultResource;
-import org.aiwolf.client.ui.res.JapaneseResource;
 import org.aiwolf.common.data.Player;
 import org.aiwolf.common.data.Role;
-import org.aiwolf.common.net.GameSettingEntity;
+import org.aiwolf.common.net.GameSetting;
 import org.aiwolf.common.util.CalendarTools;
 import org.aiwolf.common.util.Pair;
 import org.aiwolf.server.AIWolfGame;
@@ -138,7 +136,7 @@ public class GUIRoleRequestStarter {
 		playerMap.put(new AgentGUI(player), mainRole);
 		
 		DirectConnectServer gameServer = new DirectConnectServer(playerMap);
-		GameSettingEntity gameSetting = GameSettingEntity.getDefaultGame(playerMap.size());
+		GameSetting gameSetting = GameSetting.getDefaultGame(playerMap.size());
 		AIWolfGame game = new AIWolfGame(gameSetting, gameServer);
 		if(logDir != null){
 			File logFile = new File(String.format("%s/contest%s.log", logDir, timeString));

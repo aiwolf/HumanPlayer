@@ -117,12 +117,13 @@ public class DefaultResource implements AIWolfResource {
 	
 	@Override
 	public String convert(Agent agent) {
-//		String name = agentResourceList.get(agent.getAgentIdx())[0];
-//		bidiMap.put(agent, name);
+		String name = agentResourceList.get(agent.getAgentIdx())[0];
+		bidiMap.put(agent, name);
+		return name;
 		
 //		String.format("%s%02d", agent.toString(), agent.getAgentIdx());
-		bidiMap.put(agent, agent.toString());
-		return agent.toString();
+//		bidiMap.put(agent, agent.toString());
+//		return agent.toString();
 	}
 
 	@Override

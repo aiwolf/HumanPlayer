@@ -140,10 +140,10 @@ public class DefaultResource implements AIWolfResource {
 	@Override
 	public String convertTalk(Talk talk) {
 		if(talk.isSkip()){
-			return "様子を見ている";
+			return "Skip";
 		}
 		else if(talk.isOver()){
-			return "特に話すことはない";
+			return "Over";
 		}
 		try{
 			Utterance utterance = new Utterance(talk.getContent());

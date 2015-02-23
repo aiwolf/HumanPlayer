@@ -4,14 +4,17 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import javax.swing.ImageIcon;
 
 import org.aiwolf.client.lib.TemplateTalkFactory.TalkType;
 import org.aiwolf.client.lib.Topic;
+import org.aiwolf.client.lib.Utterance;
 import org.aiwolf.common.data.Agent;
 import org.aiwolf.common.data.Judge;
 import org.aiwolf.common.data.Role;
@@ -110,7 +113,9 @@ public class DefaultResource implements AIWolfResource {
 		
 	public DefaultResource(){
 		agentResourceList = Arrays.asList(agentResourceAry);
-		Collections.shuffle(agentResourceList);
+		long seed = Calendar.getInstance().getTimeInMillis()/(1000*60*60);
+		Collections.shuffle(agentResourceList, new Random(seed));
+//		Collections.shuffle(agentResourceList);
 
 		bidiMap = new BidiMap<>();
 	}
@@ -134,12 +139,82 @@ public class DefaultResource implements AIWolfResource {
 	
 	@Override
 	public String convertTalk(Talk talk) {
-		return talk.getContent();
+		if(talk.isSkip()){
+			return "様子を見ている";
+		}
+		else if(talk.isOver()){
+			return "特に話すことはない";
+		}
+		try{
+			Utterance utterance = new Utterance(talk.getContent());
+			Topic topic = utterance.getTopic();
+			if(topic == Topic.ATTACK){
+				return String.format("Attack %s", convert(utterance.getTarget()));
+			}
+			else if(topic == Topic.AGREE){
+				return String.format("I agree to %03d at day %d", utterance.getTalkID(), utterance.getTalkDay());
+			}
+			else if(topic == Topic.COMINGOUT){
+				return String.format("I am %s", convert(utterance.getRole()));
+			}
+			else if(topic == Topic.DISAGREE){
+				return String.format("I disagree to %03d at day %d", utterance.getTalkID(), utterance.getTalkDay());
+			}
+			else if(topic == Topic.DIVINED){
+				return String.format("Result of Devine:%s is %s", convert(utterance.getTarget()), convert(utterance.getResult()));
+			}
+			else if(topic == Topic.ESTIMATE){
+				return String.format("I estimate that %s is %s", convert(utterance.getTarget()), convert(utterance.getRole()));
+			}
+			else if(topic == Topic.GUARDED){
+				return String.format("I guarded %s", convert(utterance.getTarget()));
+			}
+			else if(topic == Topic.INQUESTED){
+				return String.format("Result of Inquest:%s is %s", convert(utterance.getTarget()), convert(utterance.getResult()));
+			}
+			else if(topic == Topic.VOTE){
+				return String.format("I vote to %s", convert(utterance.getTarget()));
+			}
+			return talk.getContent();
+		}catch(Exception e){
+			return talk.getContent();
+		}
+//		return talk.getContent();
 	}
 
 	@Override
 	public String convertWhisper(Talk whisper) {
+		Utterance utterance = new Utterance(whisper.getContent());
+		Topic topic = utterance.getTopic();
+		if(topic == Topic.AGREE){
+			return String.format("I agree to %03d at day %d", utterance.getTalkID(), utterance.getTalkDay());
+		}
+		else if(topic == Topic.COMINGOUT){
+			return String.format("I will comingout as %s", convert(utterance.getRole()));
+		}
+		else if(topic == Topic.DISAGREE){
+			return String.format("I disagree to %03d at day %d", utterance.getTalkID(), utterance.getTalkDay());
+		}
+		else if(topic == Topic.DIVINED){
+			return String.format("I will lie that I divine %s as %s", convert(utterance.getTarget()), convert(utterance.getResult()));
+		}
+		else if(topic == Topic.ESTIMATE){
+			return String.format("I estimate %s is %s", convert(utterance.getTarget()), convert(utterance.getRole()));
+		}
+		else if(topic == Topic.GUARDED){
+			return String.format("I will lie that I guarded %s", convert(utterance.getTarget()));
+		}
+		else if(topic == Topic.INQUESTED){
+			return String.format("I will lie that %s is inquested as %s", convert(utterance.getTarget()), convert(utterance.getResult()));
+		}
+		else if(topic == Topic.VOTE){
+			return String.format("I vote %s", convert(utterance.getTarget()));
+		}
+		else if(topic == Topic.ATTACK){
+			return String.format("I want to attack %s", convert(utterance.getTarget()));
+		}
 		return whisper.getContent();
+//		return whisper.getContent();
 	}
 
 	@Override

@@ -3,9 +3,11 @@ package org.aiwolf.client.ui.res;
 import java.awt.Image;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import javax.swing.ImageIcon;
 
@@ -20,6 +22,7 @@ import org.aiwolf.common.data.Talk;
 import org.aiwolf.common.data.Team;
 import org.aiwolf.common.data.Vote;
 import org.aiwolf.common.util.BidiMap;
+import org.aiwolf.common.util.CalendarTools;
 
 public class JapaneseResource implements AIWolfResource {
 
@@ -108,7 +111,8 @@ public class JapaneseResource implements AIWolfResource {
 	
 	public JapaneseResource() {
 		agentResourceList = Arrays.asList(agentResourceAry);
-		Collections.shuffle(agentResourceList);
+		long seed = Calendar.getInstance().getTimeInMillis()/(1000*60*60);
+		Collections.shuffle(agentResourceList, new Random(seed));
 
 		bidiMap = new BidiMap<>();
 	}

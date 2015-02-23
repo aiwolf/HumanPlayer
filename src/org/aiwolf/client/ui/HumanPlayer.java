@@ -293,6 +293,7 @@ public class HumanPlayer extends JFrame implements Player{
 	public void setTalkConverter(AIWolfResource talkConverter) {
 		this.resource = talkConverter;
 	}
+
 	
 	
 }

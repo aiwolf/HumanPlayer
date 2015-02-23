@@ -229,26 +229,42 @@ public class DefaultResource implements AIWolfResource {
 
 	@Override
 	public String convertMedium(Judge mediumResult) {
+		if(mediumResult.getAgent() == null){
+			return "No one inquested";
+		}
 		return String.format("%s was %s", convert(mediumResult.getTarget()), convert(mediumResult.getResult()));
 	}
 
 	@Override
 	public String convertDivined(Judge divineResult) {
+		if(divineResult.getAgent() == null){
+			return "No one divined";
+		}
 		return String.format("%s was %s", convert(divineResult.getTarget()), convert(divineResult.getResult()));
 	}
 
 	@Override
 	public String convertGuarded(Agent guardedAgent) {
+		if(guardedAgent == null){
+			return "No one guarded";
+		}
+
 		return String.format("%s guarded", convert(guardedAgent));
 	}
 
 	@Override
 	public String convertAttacked(Agent attackedAgent) {
+		if(attackedAgent == null){
+			return "No one attacked";
+		}
 		return String.format("%s was attacked", convert(attackedAgent));
 	}
 
 	@Override
 	public String convertExecuted(Agent executedAgent) {
+		if(executedAgent == null){
+			return "No one executed";
+		}
 		return String.format("%s was executed", convert(executedAgent));
 	}
 

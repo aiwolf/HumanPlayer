@@ -209,8 +209,9 @@ public class TalkPanel extends JPanel {
 		/////////////////////////////////////////////////////////Attack
 		StringBuffer attackText = new StringBuffer();
 		if(gameInfo.getGuardedAgent() != null){
-			attackText.append(resource.convertGuarded(gameInfo.getGuardedAgent()));
-			attackText.append("\n");
+			addAgentInformation(day, gameInfo.getGuardedAgent(), resource.convertGuarded(gameInfo.getGuardedAgent()));
+//			attackText.append(resource.convertGuarded(gameInfo.getGuardedAgent()));
+//			attackText.append("\n");
 		}
 		TreeSet<Vote> attackVoteSet = new TreeSet<>(voteComparator);
 		attackVoteSet.addAll(gameInfo.getAttackVoteList());
@@ -404,7 +405,8 @@ public class TalkPanel extends JPanel {
 		panel.add(nameLabel);
 		panel.add(textArea);
 		
-		int width = talkAreaMap.get(day).getWidth();
+		int width = getTalkArea(day).getWidth();
+//		int width = talkAreaMap.get(day).getWidth();
 		int height = Math.max(imageIcon.getIconHeight(), (nameLabel.getHeight()+textArea.getHeight()));
 		
 		panel.setSize(width, height);
@@ -574,7 +576,7 @@ public class TalkPanel extends JPanel {
 	public void setWinner(int day, Team winner) {
 		
 		Color color = HumanPlayer.PLAYER_COLOR;
-		if(winner != gameInfo.getRole().getTeam()){
+		if(gameInfo.getRole() != null && winner != gameInfo.getRole().getTeam()){
 			if(winner == Team.WEREWOLF){
 				color = HumanPlayer.WHISPER_COLOR;
 			}

@@ -35,8 +35,8 @@ public class AgentGUI extends HumanPlayer implements ActionListener{
 	 * @throws IOException 
 	 */
 	public static void main(String[] args) throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException {
-//		Role role = null;
-		Role role = Role.WEREWOLF;
+		Role role = null;
+//		Role role = Role.WEREWOLF;
 		Player player = new KajiRoleAssignPlayer();
 		AgentGUI gui = new AgentGUI(new JapaneseResource(), player);
 //		gui.setVisible(true);
@@ -44,7 +44,7 @@ public class AgentGUI extends HumanPlayer implements ActionListener{
 //		String defaultClassName = InabaPlayer.class.getName();
 //		String logDir = null;
 		String logDir = "./log/";
-		int agentNum = 18;
+		int agentNum = 7;
 		
 		for(int i = 0; i < args.length; i++){
 			if(args[i].startsWith("-")){

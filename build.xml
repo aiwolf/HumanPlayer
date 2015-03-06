@@ -16,7 +16,7 @@
 	<property name="jar.name" value="./jar/HumanPlayer"/>
 
 	<!-- Version -->
-	<property name="version" value="0.1.13"/>
+	<property name="version" value="0.1.14"/>
 	
 	
 	<!-- ****ターゲット**** -->

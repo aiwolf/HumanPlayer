@@ -311,12 +311,12 @@ public class JapaneseResource implements AIWolfResource {
 
 	@Override
 	public String convertMedium(Judge mediumResult) {
-		return String.format("%sは%sだった", convert(mediumResult.getTarget()), convert(mediumResult.getResult()));
+		return String.format("霊媒の結果%sは%sだった", convert(mediumResult.getTarget()), convert(mediumResult.getResult()));
 	}
 
 	@Override
 	public String convertDivined(Judge divineResult) {
-		return String.format("%sは%sだった", convert(divineResult.getTarget()), convert(divineResult.getResult()));
+		return String.format("占いの結果%sは%sだった", convert(divineResult.getTarget()), convert(divineResult.getResult()));
 	}
 
 	@Override
@@ -365,8 +365,13 @@ public class JapaneseResource implements AIWolfResource {
 
 	@Override
 	public String getFirstText(Agent agent, Role role) {
-		Team team = role.getTeam();
-		return String.format("あなたは %sです．与えられた役割は%sです．\n%sに所属しますので，%sの勝利に向けて行動してください．", convert(agent), convert(role), convert(team), convert(team));
+		if(role != null && agent != null){
+			Team team = role.getTeam();
+			return String.format("あなたは %sです．与えられた役割は%sです．\n%sに所属しますので，%sの勝利に向けて行動してください．", convert(agent), convert(role), convert(team), convert(team));
+		}
+		else{
+			return "";
+		}
 	}
 
 

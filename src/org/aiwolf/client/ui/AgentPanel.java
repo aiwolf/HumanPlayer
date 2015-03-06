@@ -1,17 +1,13 @@
 package org.aiwolf.client.ui;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Graphics;
 
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
-import javax.swing.border.LineBorder;
-import javax.swing.border.TitledBorder;
 
 import org.aiwolf.client.ui.res.AIWolfResource;
 import org.aiwolf.common.data.Agent;
@@ -21,10 +17,8 @@ import org.aiwolf.common.data.Status;
 public class AgentPanel extends JPanel {
 	
 	private static final Color FRIEND_ALIVE = HumanPlayer.FRIEND_COLOR;
-
 	
 	private static final Color NON_PLAYER_ALIVE = Color.WHITE;
-
 
 	private static final Color PLAYER_ALIVE = HumanPlayer.PLAYER_COLOR;
 

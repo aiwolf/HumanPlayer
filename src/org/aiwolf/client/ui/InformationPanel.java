@@ -1,9 +1,12 @@
 package org.aiwolf.client.ui;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.LayoutManager;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,6 +24,7 @@ import org.aiwolf.client.ui.res.AIWolfResource;
 import org.aiwolf.common.data.Agent;
 import org.aiwolf.common.data.Role;
 import org.aiwolf.common.data.Talk;
+import org.aiwolf.common.data.Team;
 import org.aiwolf.common.net.GameInfo;
 import org.aiwolf.common.net.GameSetting;
 
@@ -31,8 +35,9 @@ public class InformationPanel extends JPanel {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private JPanel titlePanel;
-	private JPanel agentListPanel;
+	protected JPanel titlePanel;
+	protected JPanel agentListPanel;
+	private TalkPanel talkPanel;
 //	private JPanel informationPanel;
 	
 	private Map<Agent, AgentPanel> agentPanelMap;
@@ -46,22 +51,22 @@ public class InformationPanel extends JPanel {
 		this.resource = resource;
 //		setPreferredSize(new Dimension(HumanPlayerFrame.PANEL_WIDTH, AgentPanel.PANEL_HEIGHT*5));
 		
-		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+//		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		setLayout(new BorderLayout());
 		titlePanel = new JPanel();
 //		agentListPanel = new JPanel();
 		agentListPanel = new SampleGraphicTestPanel();
 //		agentListPanel.setPreferredSize(new Dimension(getWidth(), (int)(AgentPanel.PANEL_HEIGHT*4)));
 		
+		
 //		informationPanel = new JPanel();
 //		informationPanel.setPreferredSize(new Dimension(getWidth(), (int)(AgentPanel.PANEL_HEIGHT)));
 		
-		add(titlePanel);
-		add(agentListPanel);
+		talkPanel = new TalkPanel(resource);
+//		talkPanel.setPreferredSize(new Dimension(HumanPlayer.PANEL_WIDTH, 200));		
 		
 		titlePanel.setLayout(new BoxLayout(titlePanel, BoxLayout.X_AXIS));
-		
 		JPanel logoPanel = new JPanel(new FlowLayout());
-
 		URL url=getClass().getClassLoader().getResource("img/aiwolfLogo.png");
 		ImageIcon logoIcon = new ImageIcon(url);
 		JLabel logoLabel = new JLabel(logoIcon);
@@ -69,6 +74,21 @@ public class InformationPanel extends JPanel {
 		logoPanel.add(logoLabel);
 		logoPanel.setBackground(new Color(196,196, 196));
 		titlePanel.add(logoPanel);
+//		titlePanel.setSize(getWidth(), logoIcon.getIconHeight());
+//		titlePanel.setPreferredSize(new Dimension(getWidth(), logoIcon.getIconHeight()));
+////		titlePanel.setMaximumSize(titlePanel.getSize());
+//		titlePanel.setMinimumSize(titlePanel.getSize());
+		
+//		System.out.println(logoIcon.getIconHeight()+"\t"+titlePanel.getSize());
+		
+		JPanel centerPanel = new JPanel(new BorderLayout());
+		centerPanel.add(talkPanel, BorderLayout.CENTER);
+		centerPanel.add(agentListPanel, BorderLayout.NORTH);
+
+		add(centerPanel, BorderLayout.CENTER);
+		add(titlePanel, BorderLayout.NORTH);
+//		add(agentListPanel, BorderLayout.SOUTH);
+//		add(talkPanel, BorderLayout.CENTER);
 		
 
 	}
@@ -94,6 +114,7 @@ public class InformationPanel extends JPanel {
 		
 		((SampleGraphicTestPanel)agentListPanel).setAgentPanelList(panelList);
 
+		talkPanel.initialize(gameInfo, gameSetting);
 	}
 	
 	/**
@@ -116,7 +137,9 @@ public class InformationPanel extends JPanel {
 		if(gameInfo.getExecutedAgent() != null){
 			agentPanelMap.get(gameInfo.getExecutedAgent()).setExecuted(gameInfo.getDay());
 		}
-		
+	
+		talkPanel.update(gameInfo);
+		talkPanel.scrollToTail();
 	}
 
 	/**
@@ -144,6 +167,63 @@ public class InformationPanel extends JPanel {
 		String text = resource.convertTalk(talk);
 		
 	}
+
+	/**
+	 * @param day
+	 * @param talkList
+	 * @return
+	 * @see org.aiwolf.client.ui.TalkPanel#updateTalk(int, java.util.List)
+	 */
+	public boolean updateTalk(int day, List<Talk> talkList) {
+		return talkPanel.updateTalk(day, talkList);
+	}
 	
+	
+
+	/**
+	 * @return
+	 * @see org.aiwolf.client.ui.TalkPanel#getLastTalkIdx()
+	 */
+	public int getLastTalkIdx() {
+		return talkPanel.getLastTalkIdx();
+	}
+
+	/**
+	 * @return
+	 * @see org.aiwolf.client.ui.TalkPanel#getLastWhisperIdx()
+	 */
+	public int getLastWhisperIdx() {
+		return talkPanel.getLastWhisperIdx();
+	}
+
+	/**
+	 * @param day
+	 * @param whisperList
+	 * @return
+	 * @see org.aiwolf.client.ui.TalkPanel#updateWhisper(int, java.util.List)
+	 */
+	public boolean updateWhisper(int day, List<Talk> whisperList) {
+		return talkPanel.updateWhisper(day, whisperList);
+	}
+	
+	/**
+	 * 
+	 */
+	public void scrollToTail(){
+		talkPanel.scrollToTail();
+	}
+
+	/**
+	 * @param gameInfo
+	 * @see org.aiwolf.client.ui.TalkPanel#dayStart(org.aiwolf.common.net.GameInfo)
+	 */
+	public void dayStart(GameInfo gameInfo) {
+		talkPanel.dayStart(gameInfo);
+	}
+
+	public void setWinner(int day, Team winner) {
+		talkPanel.setWinner(day, winner);
+		
+	}
 	
 }

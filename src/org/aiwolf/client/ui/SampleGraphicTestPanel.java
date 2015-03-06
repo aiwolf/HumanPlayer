@@ -70,7 +70,7 @@ public class SampleGraphicTestPanel extends JPanel{
 	
 		setSize(AgentPanel.PANEL_HEIGHT*10,(int)(AgentPanel.PANEL_HEIGHT*3.1));
 		setPreferredSize(getSize());
-//		setMinimumSize(getSize());
+		setMinimumSize(getSize());
 		setMaximumSize(getSize());
 
 

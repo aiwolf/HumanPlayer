@@ -3,6 +3,7 @@ package org.aiwolf.client.ui;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Image;
+import java.awt.event.ItemListener;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -110,6 +111,7 @@ public class TalkPanel extends JPanel {
 	AIWolfResource resource;
 	Map<Agent, ImageIcon> imageIconMap;
 
+	TalkItemListener itemListener;
 	
 	static final Comparator<Vote> voteComparator = new Comparator<Vote>() {
 		@Override
@@ -264,6 +266,10 @@ public class TalkPanel extends JPanel {
 		listModel.addElement(component);
 		JScrollPane scrollPane = (JScrollPane)dailyTalkPane.getSelectedComponent();
 		scrollToTail(scrollPane);
+		
+		if(itemListener != null){
+			itemListener.addItem(component);
+		}
 	}
 
 	/**
@@ -348,6 +354,19 @@ public class TalkPanel extends JPanel {
 	 * @param talk
 	 */
 	public void addTalk(int day, Talk talk, TalkType talkType) {
+		JPanel talkPanel = createTalkPanel(talk, talkType);
+		
+		addItem(day, talkPanel);
+	}
+
+	/**
+	 * Create Talk Panel from Talk and TalkType
+	 * @param day
+	 * @param talk
+	 * @param talkType
+	 * @return
+	 */
+	public JPanel createTalkPanel(Talk talk, TalkType talkType) {
 		Utterance utterance = new Utterance(talk.getContent());
 
 		JPanel talkPanel = new JPanel();
@@ -424,16 +443,16 @@ public class TalkPanel extends JPanel {
 		talkPanel.add(nameLabel);
 		talkPanel.add(textArea);
 		
-		int width = getTalkArea(day).getWidth();
-//		int width = talkAreaMap.get(day).getWidth();
+
+		int width = getTalkArea(0).getWidth();
 		int height = Math.max(imageIcon.getIconHeight(), (nameLabel.getHeight()+textArea.getHeight()));
 		
 		talkPanel.setSize(width, height);
 		talkPanel.setPreferredSize(new Dimension(width, height));
 		talkPanel.setVisible(true);
 		talkPanel.setBorder(new SoftBevelBorder(BevelBorder.RAISED));
-
-		addItem(day, talkPanel);
+		
+		return talkPanel;
 	}
 
 	/**
@@ -604,6 +623,20 @@ public class TalkPanel extends JPanel {
 
 	public int getLastWhisperIdx() {
 		return lastWhisperIdx;
+	}
+
+	/**
+	 * @return itemListener
+	 */
+	public TalkItemListener getItemListener() {
+		return itemListener;
+	}
+
+	/**
+	 * @param itemListener セットする itemListener
+	 */
+	public void setItemListener(TalkItemListener itemListener) {
+		this.itemListener = itemListener;
 	}
 	
 }

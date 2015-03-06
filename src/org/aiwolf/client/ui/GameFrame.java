@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -41,6 +42,7 @@ import org.aiwolf.server.util.MultiGameLogger;
 
 public class GameFrame extends JFrame implements GameLogger, ActionListener{
 
+	private static final int ACTION_PANEL_HEIGHT = 30;
 	/**
 	 * 
 	 */
@@ -134,7 +136,7 @@ public class GameFrame extends JFrame implements GameLogger, ActionListener{
 	protected InformationPanel infoPanel;
 	protected JPanel agentPanel;
 	protected UserActionPanel userActionPanel;
-	protected TalkPanel talkPanel;
+//	protected TalkPanel talkPanel;
 
 	/**
 	 * Resource
@@ -190,19 +192,20 @@ public class GameFrame extends JFrame implements GameLogger, ActionListener{
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		mainPanel = new JPanel();
-//		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		mainPanel.setLayout(new BorderLayout());
+//		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
 
 		infoPanel = new InformationPanel(resource);
-
-		talkPanel = new TalkPanel(resource);
-		talkPanel.setPreferredSize(new Dimension(HumanPlayer.PANEL_WIDTH, 200));
+		infoPanel.setPreferredSize(new Dimension(HumanPlayer.PANEL_WIDTH, getHeight()-ACTION_PANEL_HEIGHT));
+		
+//		talkPanel = new TalkPanel(resource);
+//		talkPanel.setPreferredSize(new Dimension(HumanPlayer.PANEL_WIDTH, 200));
 
 		userActionPanel = new UserActionPanel(resource);
-		userActionPanel.setPreferredSize(new Dimension(HumanPlayer.PANEL_WIDTH, 50));
+		userActionPanel.setPreferredSize(new Dimension(HumanPlayer.PANEL_WIDTH, ACTION_PANEL_HEIGHT));
 		
-		mainPanel.add(infoPanel, BorderLayout.NORTH);
-		mainPanel.add(talkPanel, BorderLayout.CENTER);
+		mainPanel.add(infoPanel, BorderLayout.CENTER);
+//		mainPanel.add(talkPanel, BorderLayout.CENTER);
 		mainPanel.add(userActionPanel, BorderLayout.SOUTH);
 
 		getContentPane().add(mainPanel, BorderLayout.CENTER);
@@ -223,15 +226,15 @@ public class GameFrame extends JFrame implements GameLogger, ActionListener{
 		skip = false;
 		
 		this.mainPanel.add(stepActionPanel, BorderLayout.SOUTH);
-
-	
+		
+		
 	}
 	
 	public void initialize(GameInfo gameInfo, GameSetting gameSetting){
 		this.gameSetting = gameSetting;
 		infoPanel.initialize(gameInfo, gameSetting);
 		userActionPanel.initialize(gameInfo, gameSetting);
-		talkPanel.initialize(gameInfo, gameSetting);
+//		infoPanel.talkPanel.initialize(gameInfo, gameSetting);
 		setVisible(true);
 		update(gameInfo);
 		
@@ -240,10 +243,10 @@ public class GameFrame extends JFrame implements GameLogger, ActionListener{
 	
 	public void update(GameInfo gameInfo){
 		infoPanel.update(gameInfo);
-		talkPanel.update(gameInfo);
+//		infoPanel.talkPanel.update(gameInfo);
 //		updateTalk(gameInfo);
 		userActionPanel.update(gameInfo);
-		talkPanel.scrollToTail();
+//		infoPanel.talkPanel.scrollToTail();
 		
 		for(Talk talk:gameInfo.getTalkList()){
 			Utterance u = new Utterance(talk.getContent());
@@ -263,18 +266,18 @@ public class GameFrame extends JFrame implements GameLogger, ActionListener{
 	 * @param gameInfo
 	 */
 	protected void updateTalk(GameInfo gameInfo) {
-		for(int i = talkPanel.getLastTalkIdx(); i < gameInfo.getTalkList().size(); i++){
+		for(int i = infoPanel.getLastTalkIdx(); i < gameInfo.getTalkList().size(); i++){
 			List<Talk> subList = gameInfo.getTalkList().subList(0, i+1);
-			boolean isUpdated = talkPanel.updateTalk(gameInfo.getDay(), subList);
+			boolean isUpdated = infoPanel.updateTalk(gameInfo.getDay(), subList);
 			if(isUpdated){
 				waitForNext();
 //				waitSecond();
 			}
 		}
 //		talkPanel.updateTalk(gameInfo.getDay(), gameInfo.getTalkList());
-		for(int i = talkPanel.getLastWhisperIdx(); i < gameInfo.getWhisperList().size(); i++){
+		for(int i = infoPanel.getLastWhisperIdx(); i < gameInfo.getWhisperList().size(); i++){
 			List<Talk> subList = gameInfo.getWhisperList().subList(0, i+1);
-			boolean isUpdated = talkPanel.updateWhisper(gameInfo.getDay(), subList);
+			boolean isUpdated = infoPanel.updateWhisper(gameInfo.getDay(), subList);
 			if(isUpdated){
 //				waitSecond();
 				waitForNext();
@@ -286,14 +289,14 @@ public class GameFrame extends JFrame implements GameLogger, ActionListener{
 			// TODO 自動生成された catch ブロック
 			e.printStackTrace();
 		}
-		talkPanel.scrollToTail();
+		infoPanel.scrollToTail();
 //		talkPanel.updateWhisper(gameInfo.getDay(), gameInfo.getWhisperList());
 	}
 
 	
 	public void dayStart() {
 		userActionPanel.clear();
-		talkPanel.dayStart(gameInfo);
+		infoPanel.dayStart(gameInfo);
 		userActionPanel.dayStart(gameInfo);
 	}
 
@@ -354,7 +357,7 @@ public class GameFrame extends JFrame implements GameLogger, ActionListener{
 
 	@Override
 	public void close() {
-		talkPanel.dayStart(gameInfo);
+		infoPanel.dayStart(gameInfo);
 		int humanSide = 0;
 		int wolfSide = 0;
 		for(Agent agent:gameInfo.getAgentList()){
@@ -377,9 +380,9 @@ public class GameFrame extends JFrame implements GameLogger, ActionListener{
 			winner = Team.WEREWOLF;
 		}
 
-		talkPanel.setWinner(gameInfo.getDay(), winner);
+		infoPanel.setWinner(gameInfo.getDay(), winner);
 		waitSecond();
-		talkPanel.scrollToTail();
+		infoPanel.scrollToTail();
 
 	}
 

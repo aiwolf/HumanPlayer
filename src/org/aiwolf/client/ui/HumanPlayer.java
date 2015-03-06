@@ -73,7 +73,7 @@ public class HumanPlayer extends JFrame implements Player{
 	InformationPanel infoPanel;
 	JPanel agentPanel;
 	UserActionPanel userActionPanel;
-	TalkPanel talkPanel;
+//	TalkPanel talkPanel;
 	
 	GameInfo gameInfo;
 	GameSetting gameSetting;
@@ -130,17 +130,20 @@ public class HumanPlayer extends JFrame implements Player{
 
 		infoPanel = new InformationPanel(resource);
 //		infoPanel.setPreferredSize(new Dimension(HumanPlayerFrame.PANEL_WIDTH, AgentPanel.PANEL_HEIGHT*5));
-		talkPanel = new TalkPanel(resource);
-		talkPanel.setPreferredSize(new Dimension(HumanPlayer.PANEL_WIDTH, 200));
+//		talkPanel = new TalkPanel(resource);
+//		talkPanel.setPreferredSize(new Dimension(HumanPlayer.PANEL_WIDTH, 200));
 //		talkPanel.setMaximumSize(new Dimension(HumanPlayerFrame.PANEL_WIDTH, 200));
 		userActionPanel = new UserActionPanel(resource);
 		userActionPanel.setPreferredSize(new Dimension(HumanPlayer.PANEL_WIDTH, 50));
 
 		
-		mainPanel.add(infoPanel, BorderLayout.NORTH);
-		mainPanel.add(talkPanel, BorderLayout.CENTER);
+//		mainPanel.add(infoPanel, BorderLayout.NORTH);
+////		mainPanel.add(talkPanel, BorderLayout.CENTER);
+//		mainPanel.add(userActionPanel, BorderLayout.SOUTH);
+		mainPanel.add(infoPanel, BorderLayout.CENTER);
+//		mainPanel.add(talkPanel, BorderLayout.CENTER);
 		mainPanel.add(userActionPanel, BorderLayout.SOUTH);
-
+		
 		getContentPane().add(mainPanel, BorderLayout.CENTER);
 	}
 
@@ -149,7 +152,7 @@ public class HumanPlayer extends JFrame implements Player{
 		this.gameSetting = gameSetting;
 		infoPanel.initialize(gameInfo, gameSetting);
 		userActionPanel.initialize(gameInfo, gameSetting);
-		talkPanel.initialize(gameInfo, gameSetting);
+//		talkPanel.initialize(gameInfo, gameSetting);
 		setVisible(true);
 		update(gameInfo);
 		
@@ -159,10 +162,10 @@ public class HumanPlayer extends JFrame implements Player{
 	@Override
 	public void update(GameInfo gameInfo){
 		infoPanel.update(gameInfo);
-		talkPanel.update(gameInfo);
+//		talkPanel.update(gameInfo);
 		updateTalk(gameInfo);
 		userActionPanel.update(gameInfo);
-		talkPanel.scrollToTail();
+		infoPanel.scrollToTail();
 		
 		for(Talk talk:gameInfo.getTalkList()){
 			Utterance u = new Utterance(talk.getContent());
@@ -183,8 +186,8 @@ public class HumanPlayer extends JFrame implements Player{
 	 * @param gameInfo
 	 */
 	protected void updateTalk(GameInfo gameInfo) {
-		talkPanel.updateTalk(gameInfo.getDay(), gameInfo.getTalkList());
-		talkPanel.updateWhisper(gameInfo.getDay(), gameInfo.getWhisperList());
+		infoPanel.updateTalk(gameInfo.getDay(), gameInfo.getTalkList());
+		infoPanel.updateWhisper(gameInfo.getDay(), gameInfo.getWhisperList());
 	}
 
 	@Override
@@ -201,7 +204,7 @@ public class HumanPlayer extends JFrame implements Player{
 	@Override
 	public void dayStart() {
 		userActionPanel.clear();
-		talkPanel.dayStart(gameInfo);
+		infoPanel.dayStart(gameInfo);
 		userActionPanel.dayStart(gameInfo);
 
 		remainTalk = gameSetting.getMaxTalk();
@@ -255,7 +258,7 @@ public class HumanPlayer extends JFrame implements Player{
 
 	@Override
 	public void finish() {
-		talkPanel.dayStart(gameInfo);
+		infoPanel.dayStart(gameInfo);
 		int humanSide = 0;
 		int wolfSide = 0;
 		for(Agent agent:gameInfo.getAgentList()){
@@ -277,7 +280,7 @@ public class HumanPlayer extends JFrame implements Player{
 		else if(wolfSide >= humanSide){
 			winner = Team.WEREWOLF;
 		}
-		talkPanel.setWinner(gameInfo.getDay(), winner);
+		infoPanel.setWinner(gameInfo.getDay(), winner);
 	}
 
 	/**

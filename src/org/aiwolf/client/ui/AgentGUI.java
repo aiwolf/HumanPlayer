@@ -23,6 +23,11 @@ import org.aiwolf.common.net.GameSetting;
 import org.aiwolf.kajiClient.player.KajiRoleAssignPlayer;
 import org.aiwolf.server.bin.RoleRequestStarter;
 
+/**
+ * @deprecated
+ * @author tori
+ *
+ */
 public class AgentGUI extends HumanPlayer implements ActionListener{
 
 	/**
@@ -117,23 +122,22 @@ public class AgentGUI extends HumanPlayer implements ActionListener{
 	 * 
 	 * @param gameInfo
 	 */
-	@Override
 	protected void updateTalk(GameInfo gameInfo) {
-		for(int i = talkPanel.getLastTalkIdx(); i < gameInfo.getTalkList().size(); i++){
+		for(int i = infoPanel.getLastTalkIdx(); i < gameInfo.getTalkList().size(); i++){
 			List<Talk> subList = gameInfo.getTalkList().subList(0, i+1);
-			boolean isUpdated = talkPanel.updateTalk(gameInfo.getDay(), subList);
+			boolean isUpdated = infoPanel.updateTalk(gameInfo.getDay(), subList);
 			if(isUpdated){
-//				waitForNext();
-				waitSecond();
+				waitForNext();
+//				waitSecond();
 			}
 		}
 //		talkPanel.updateTalk(gameInfo.getDay(), gameInfo.getTalkList());
-		for(int i = talkPanel.getLastWhisperIdx(); i < gameInfo.getWhisperList().size(); i++){
+		for(int i = infoPanel.getLastWhisperIdx(); i < gameInfo.getWhisperList().size(); i++){
 			List<Talk> subList = gameInfo.getWhisperList().subList(0, i+1);
-			boolean isUpdated = talkPanel.updateWhisper(gameInfo.getDay(), subList);
+			boolean isUpdated = infoPanel.updateWhisper(gameInfo.getDay(), subList);
 			if(isUpdated){
-				waitSecond();
-//				waitForNext();
+//				waitSecond();
+				waitForNext();
 			}
 		}
 		try {
@@ -142,10 +146,9 @@ public class AgentGUI extends HumanPlayer implements ActionListener{
 			// TODO 自動生成された catch ブロック
 			e.printStackTrace();
 		}
-		talkPanel.scrollToTail();
+		infoPanel.scrollToTail();
 //		talkPanel.updateWhisper(gameInfo.getDay(), gameInfo.getWhisperList());
 	}
-
 	public void initialize(GameInfo gameInfo, GameSetting gameSetting) {
 		player.initialize(gameInfo, gameSetting);
 		super.initialize(gameInfo, gameSetting);

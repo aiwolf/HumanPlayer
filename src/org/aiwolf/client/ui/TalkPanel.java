@@ -183,7 +183,8 @@ public class TalkPanel extends JPanel {
 		
 		addText(day, "Day "+gameInfo.getDay());
 		
-		/////////////////////////////////////////////////////////Vote
+		///////////////////////////////////////////////////////
+		//Vote
 //		StringBuffer voteText = new StringBuffer();
 		TreeSet<Vote> voteSet = new TreeSet<>(voteComparator);
 		voteSet.addAll(gameInfo.getVoteList());
@@ -206,13 +207,13 @@ public class TalkPanel extends JPanel {
 		}
 //		addText(day, voteText.toString());
 		
-		/////////////////////////////////////////////////////////Attack
-		StringBuffer attackText = new StringBuffer();
+		///////////////////////////////////////////////////////
+		//Attack
 		if(gameInfo.getGuardedAgent() != null){
 			addAgentInformation(day, gameInfo.getGuardedAgent(), resource.convertGuarded(gameInfo.getGuardedAgent()));
-//			attackText.append(resource.convertGuarded(gameInfo.getGuardedAgent()));
-//			attackText.append("\n");
 		}
+		///////////////////////////////////////////////////////
+		//Guard
 		TreeSet<Vote> attackVoteSet = new TreeSet<>(voteComparator);
 		attackVoteSet.addAll(gameInfo.getAttackVoteList());
 		for(Vote attackVote:attackVoteSet){
@@ -230,7 +231,8 @@ public class TalkPanel extends JPanel {
 			addText(day, resource.convertAttacked(gameInfo.getAttackedAgent()));
 		}
 		
-		/////////////////////////////////////////////////////////Divine Medium
+		///////////////////////////////////////////////////////
+		//Divine Medium
 		if(gameInfo.getDivineResult() != null){
 //			Agent agent = gameInfo.getDivineResult().getAgent();
 			Agent target = gameInfo.getDivineResult().getTarget();
@@ -307,35 +309,35 @@ public class TalkPanel extends JPanel {
 	 */
 	public void addAgentInformation(int day, Agent agent, String information, Color color){
 		if(information != null && !information.trim().isEmpty()){
-			JPanel panel = new JPanel();
+			JPanel logPanel = new JPanel();
 			SpringLayout layout = new SpringLayout();
-			panel.setLayout(layout);
+			logPanel.setLayout(layout);
 
-			ImageIcon imageIcon = getTalkAgentIcon(agent);
+			ImageIcon imageIcon = getAgentIcon(agent);
 			JLabel iconLabel = new JLabel(imageIcon);
 			JTextArea textLabel = new JTextArea(information);
 			textLabel.setBackground(color);
 			
-			layout.putConstraint(SpringLayout.NORTH, iconLabel, 0, SpringLayout.NORTH, panel);
-			layout.putConstraint(SpringLayout.WEST, iconLabel, 0, SpringLayout.WEST, panel);
+			layout.putConstraint(SpringLayout.NORTH, iconLabel, 0, SpringLayout.NORTH, logPanel);
+			layout.putConstraint(SpringLayout.WEST, iconLabel, 0, SpringLayout.WEST, logPanel);
 
 			layout.putConstraint(SpringLayout.NORTH, textLabel, 0, SpringLayout.NORTH, iconLabel);
 			layout.putConstraint(SpringLayout.WEST, textLabel, 0, SpringLayout.EAST, iconLabel);
 			
-			panel.add(iconLabel);
-			panel.add(textLabel);
+			logPanel.add(iconLabel);
+			logPanel.add(textLabel);
 			
-			panel.setBackground(color);
+			logPanel.setBackground(color);
 			
 			int width = talkAreaMap.get(day).getWidth();
 			int height = Math.max(imageIcon.getIconHeight(), (textLabel.getHeight()+1));
 			
-			panel.setSize(width, height);
-			panel.setPreferredSize(new Dimension(width, height));
+			logPanel.setSize(width, height);
+			logPanel.setPreferredSize(new Dimension(width, height));
 
-			panel.setVisible(true);
+			logPanel.setVisible(true);
 //			panel.setBorder(new LineBorder(Color.BLACK, 1));
-			addItem(day, panel);
+			addItem(day, logPanel);
 		}
 	}
 
@@ -348,11 +350,11 @@ public class TalkPanel extends JPanel {
 	public void addTalk(int day, Talk talk, TalkType talkType) {
 		Utterance utterance = new Utterance(talk.getContent());
 
-		JPanel panel = new JPanel();
+		JPanel talkPanel = new JPanel();
 		SpringLayout layout = new SpringLayout();
-		panel.setLayout(layout);
+		talkPanel.setLayout(layout);
 
-		ImageIcon imageIcon = getTalkAgentIcon(talk.getAgent());
+		ImageIcon imageIcon = getAgentIcon(talk.getAgent());
 		
 		JLabel iconLabel = new JLabel(imageIcon);
 		JLabel nameLabel = new JLabel(String.format("%03d:%s", talk.getIdx(), resource.convert(talk.getAgent())));
@@ -386,12 +388,12 @@ public class TalkPanel extends JPanel {
 		textArea.setBackground(new Color(0,0,0,0));
 		textArea.setFont(nameLabel.getFont());
 		
-		layout.putConstraint(SpringLayout.NORTH, iconLabel, 0, SpringLayout.NORTH, panel);
+		layout.putConstraint(SpringLayout.NORTH, iconLabel, 0, SpringLayout.NORTH, talkPanel);
 		if(talkType == TalkType.TALK){
-			layout.putConstraint(SpringLayout.WEST, iconLabel, 0, SpringLayout.WEST, panel);
+			layout.putConstraint(SpringLayout.WEST, iconLabel, 0, SpringLayout.WEST, talkPanel);
 		}
 		else{
-			layout.putConstraint(SpringLayout.WEST, iconLabel, 30, SpringLayout.WEST, panel);
+			layout.putConstraint(SpringLayout.WEST, iconLabel, 30, SpringLayout.WEST, talkPanel);
 		}
 				
 		
@@ -401,35 +403,37 @@ public class TalkPanel extends JPanel {
 		layout.putConstraint(SpringLayout.NORTH, textArea, 0, SpringLayout.SOUTH, nameLabel);
 		layout.putConstraint(SpringLayout.WEST, textArea, 0, SpringLayout.EAST, iconLabel);
 		
-		panel.add(iconLabel);
-		panel.add(nameLabel);
-		panel.add(textArea);
+		
+		if(talkType == TalkType.WHISPER){
+			talkPanel.setBackground(HumanPlayer.WHISPER_COLOR);
+		}
+		else if(talk.getAgent() == gameInfo.getAgent()){
+			talkPanel.setBackground(HumanPlayer.PLAYER_COLOR);
+		}
+		else if(gameInfo.getRoleMap().get(talk.getAgent()) == gameInfo.getRole()){
+			talkPanel.setBackground(HumanPlayer.FRIEND_COLOR);
+		}
+		else if(utterance.getTopic() == Topic.COMINGOUT || utterance.getTopic() == Topic.DIVINED || utterance.getTopic() == Topic.GUARDED || utterance.getTopic() == Topic.INQUESTED){
+			talkPanel.setBackground(HumanPlayer.IMPORTANT_COLOR);
+		}
+		else{
+			talkPanel.setBackground(HumanPlayer.TALK_COLOR);
+		}
+		
+		talkPanel.add(iconLabel);
+		talkPanel.add(nameLabel);
+		talkPanel.add(textArea);
 		
 		int width = getTalkArea(day).getWidth();
 //		int width = talkAreaMap.get(day).getWidth();
 		int height = Math.max(imageIcon.getIconHeight(), (nameLabel.getHeight()+textArea.getHeight()));
 		
-		panel.setSize(width, height);
-		panel.setPreferredSize(new Dimension(width, height));
-		panel.setVisible(true);
-		panel.setBorder(new SoftBevelBorder(BevelBorder.RAISED));
+		talkPanel.setSize(width, height);
+		talkPanel.setPreferredSize(new Dimension(width, height));
+		talkPanel.setVisible(true);
+		talkPanel.setBorder(new SoftBevelBorder(BevelBorder.RAISED));
 
-		if(talkType == TalkType.WHISPER){
-			panel.setBackground(HumanPlayer.WHISPER_COLOR);
-		}
-		else if(talk.getAgent() == gameInfo.getAgent()){
-			panel.setBackground(HumanPlayer.PLAYER_COLOR);
-		}
-		else if(gameInfo.getRoleMap().get(talk.getAgent()) == gameInfo.getRole()){
-			panel.setBackground(HumanPlayer.FRIEND_COLOR);
-		}
-		else if(utterance.getTopic() == Topic.COMINGOUT || utterance.getTopic() == Topic.DIVINED || utterance.getTopic() == Topic.GUARDED || utterance.getTopic() == Topic.INQUESTED){
-			panel.setBackground(HumanPlayer.IMPORTANT_COLOR);
-		}
-		else{
-			panel.setBackground(HumanPlayer.TALK_COLOR);
-		}
-		addItem(day, panel);
+		addItem(day, talkPanel);
 	}
 
 	/**
@@ -437,7 +441,7 @@ public class TalkPanel extends JPanel {
 	 * @param agent
 	 * @return
 	 */
-	protected ImageIcon getTalkAgentIcon(Agent agent) {
+	protected ImageIcon getAgentIcon(Agent agent) {
 		if(!imageIconMap.containsKey(agent)){
 			ImageIcon imageIcon = resource.getImageIcon(agent);
 			int h = imageIcon.getIconHeight();

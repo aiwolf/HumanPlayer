@@ -46,6 +46,7 @@ public class AgentImagePanel extends AgentPanel {
 		
 		iconLabel = new JLabel(imageIcon);
 		addLabel();
+//		setSize(w, h);
 //		
 //		Graphics g = getGraphics();
 //		g.drawImage(imageIcon.getImage(), 0, 0, this);

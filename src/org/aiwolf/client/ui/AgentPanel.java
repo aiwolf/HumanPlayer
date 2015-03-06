@@ -90,6 +90,7 @@ public class AgentPanel extends JPanel {
 		setBorder(border);
 		
 		Dimension dimension = new Dimension(PANEL_WIDTH, PANEL_HEIGHT);
+		setSize(dimension);
 		setPreferredSize(dimension);
 		setMaximumSize(dimension);
 		setMinimumSize(dimension);

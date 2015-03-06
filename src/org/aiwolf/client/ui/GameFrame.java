@@ -56,7 +56,7 @@ public class GameFrame extends JFrame implements GameLogger, ActionListener{
 		String timeString = CalendarTools.toDateTime(System.currentTimeMillis()).replaceAll("[\\s-/:]", "");
 		
 		List<Player> list = new ArrayList<Player>();
-		for(int i = 0; i < 15; i++){
+		for(int i = 0; i < 5; i++){
 			list.add(new KajiRoleAssignPlayer());
 		}
 		String logDir = "./log";
@@ -194,10 +194,10 @@ public class GameFrame extends JFrame implements GameLogger, ActionListener{
 		mainPanel.setLayout(new BorderLayout());
 
 		infoPanel = new InformationPanel(resource);
-//		infoPanel.setPreferredSize(new Dimension(HumanPlayerFrame.PANEL_WIDTH, AgentPanel.PANEL_HEIGHT*5));
+
 		talkPanel = new TalkPanel(resource);
 		talkPanel.setPreferredSize(new Dimension(HumanPlayer.PANEL_WIDTH, 200));
-//		talkPanel.setMaximumSize(new Dimension(HumanPlayerFrame.PANEL_WIDTH, 200));
+
 		userActionPanel = new UserActionPanel(resource);
 		userActionPanel.setPreferredSize(new Dimension(HumanPlayer.PANEL_WIDTH, 50));
 		

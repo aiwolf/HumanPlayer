@@ -209,6 +209,7 @@ public class InformationPanel extends JPanel {
 			
 			Utterance u = new Utterance(talk.getContent());
 			
+			eventPanel.clearArrow();
 			if(talkType == TalkType.TALK){
 				switch(u.getTopic()){
 				case ATTACK:
@@ -221,7 +222,7 @@ public class InformationPanel extends JPanel {
 				default:
 					break;
 				}
-			}			
+			}
 			return true;
 		}
 		return false;
@@ -299,20 +300,21 @@ public class InformationPanel extends JPanel {
 			talkPanel.addText(day, resource.convertVote(vote), color);
 		}
 		if(gameInfo.getExecutedAgent() != null){
-			inform(gameInfo.getExecutedAgent(), resource.convertExecuted(gameInfo.getExecutedAgent()), ACTION_COLOR);
+			inform(resource.convertExecuted(gameInfo.getExecutedAgent()), ACTION_COLOR, gameInfo.getExecutedAgent());
 		}
 
 		///////////////////////////////////////////////////////
 		//Divine Medium
 		if(gameInfo.getDivineResult() != null){
-//			Agent agent = gameInfo.getDivineResult().getAgent();
+			Agent agent = gameInfo.getDivineResult().getAgent();
 			Agent target = gameInfo.getDivineResult().getTarget();
 			
-			inform(target, resource.convertDivined(gameInfo.getDivineResult()), ACTION_COLOR);
+			inform(resource.convertDivined(gameInfo.getDivineResult()), ACTION_COLOR, agent, target);
 		}
 		if(gameInfo.getMediumResult() != null){
+			Agent agent = gameInfo.getMediumResult().getAgent();
 			Agent target = gameInfo.getMediumResult().getTarget();
-			inform(target, resource.convertMedium(gameInfo.getMediumResult()), ACTION_COLOR);
+			inform(resource.convertMedium(gameInfo.getMediumResult()), ACTION_COLOR, agent, target);
 //			talkPanel.addAgentInformation(day, target, resource.convertMedium(gameInfo.getMediumResult()));
 		}
 		
@@ -328,12 +330,12 @@ public class InformationPanel extends JPanel {
 		///////////////////////////////////////////////////////
 		//Guard
 		if(gameInfo.getGuardedAgent() != null){
-			inform(gameInfo.getGuardedAgent(), resource.convertGuarded(gameInfo.getGuardedAgent()), ACTION_COLOR);
+			inform(resource.convertGuarded(gameInfo.getGuardedAgent()), ACTION_COLOR, gameInfo.getGuardedAgent());
 //			talkPanel.addAgentInformation(day, gameInfo.getGuardedAgent(), resource.convertGuarded(gameInfo.getGuardedAgent()));
 		}
 
 		if(gameInfo.getAttackedAgent() != null){
-			inform(gameInfo.getAttackedAgent(), resource.convertAttacked(gameInfo.getAttackedAgent()), WHISPER_COLOR);
+			inform(resource.convertAttacked(gameInfo.getAttackedAgent()), WHISPER_COLOR, gameInfo.getAttackedAgent());
 		}
 		else if(gameInfo.getDay() > 1){
 			inform(resource.convertAttacked(gameInfo.getAttackedAgent()), PLAYER_COLOR);
@@ -348,7 +350,11 @@ public class InformationPanel extends JPanel {
 
 
 	protected void inform(String text,Color color) {
-		inform(null, text, color);
+		inform(text, color, null, null);
+	}
+
+	protected void inform(String text,Color color, Agent agent) {
+		inform(text, color, agent, null);
 	}
 
 	/**
@@ -357,7 +363,7 @@ public class InformationPanel extends JPanel {
 	 * @param text
 	 * @param color
 	 */
-	protected void inform(Agent agent, String text,Color color) {
+	protected void inform(String text,Color color, Agent agent, Agent target) {
 		int day = gameInfo.getDay();
 		if(agent != null){
 			JPanel panel = talkPanel.createLogPanel(day, agent, text, color);
@@ -372,6 +378,12 @@ public class InformationPanel extends JPanel {
 			eventPanel.addCenterItem(textArea2);
 		}
 
+		if(agent != null && target != null){
+			eventPanel.addArrow(agent, target);
+		}
+		else{
+			eventPanel.clearArrow();
+		}
 		if(waitListener != null){
 			waitListener.waitForNext();
 		}

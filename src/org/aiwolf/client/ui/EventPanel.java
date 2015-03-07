@@ -11,6 +11,7 @@ import java.awt.Stroke;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.QuadCurve2D;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -255,17 +256,47 @@ public class EventPanel extends JPanel{
 				else if(tcy > getHeight()*2/3){
 					tcy = toPanel.getBounds().getMinY();
 				}
-
+				else{
+					if(tcx < getWidth()/2){
+						tcx = toPanel.getBounds().getMaxX();
+					}
+					else{
+						tcx = toPanel.getBounds().getMinX();
+					}
+				}
 				
 				double cx = getWidth()/2;
 				double cy = getHeight()/2;
 				
 				Stroke defaultStroke = g2.getStroke();
+
 				BasicStroke stroke = new BasicStroke(4.0f);
 				g2.setStroke(stroke);
-
 				QuadCurve2D.Double curve = new QuadCurve2D.Double(fcx, fcy, cx, cy, tcx, tcy);
 				g2.draw(curve);
+
+				if(tcx == cx){
+					cx+=1;
+				}
+				double theta = Math.atan2((tcy-cy), (tcx-cx));
+				
+				double r = 10;
+				double dt = Math.PI/4;
+				Polygon p = new Polygon();
+				p.addPoint((int)tcx, (int)tcy);
+//				p.addPoint((int)(tcx-Math.cos(theta)*r),(int)(tcy-Math.sin(theta)*r));
+				p.addPoint((int)(tcx-Math.cos(theta+dt)*r),(int)(tcy-Math.sin(theta+dt)*r));
+				p.addPoint((int)(tcx-Math.cos(theta-dt)*r),(int)(tcy-Math.sin(theta-dt)*r));
+//				p.addPoint((int)(tcx+Math.cos(theta+Math.PI/8+Math.PI)*r), (int)(tcy+Math.sin(theta+Math.PI/8+Math.PI)*r));
+//				p.addPoint((int)(tcx-Math.cos(theta-Math.PI/8+Math.PI)*r), (int)(tcy+Math.sin(theta-Math.PI/8+Math.PI)*r));
+				p.addPoint((int)tcx, (int)tcy);
+
+//				System.out.println("theta="+theta/Math.PI*180+"\t"+theta );
+//				System.out.println(Arrays.toString(p.xpoints));
+//				System.out.println(Arrays.toString(p.ypoints));
+//				g.setColor(Color.BLUE);
+				g2.drawPolygon(p);
+				g2.fillPolygon(p);
 				
 				g2.setStroke(defaultStroke);
 
@@ -298,7 +329,7 @@ public class EventPanel extends JPanel{
 			}	
 			centerPanel.setVisible(true);
 		}
-		arrowList.clear();
+//		arrowList.clear();
 		
 		this.repaint();
 	}
@@ -321,71 +352,71 @@ public class EventPanel extends JPanel{
 
 	public void clearArrow() {
 		arrowList.clear();
-		centerPanel.setVisible(false);
+//		centerPanel.setVisible(false);
 //		repaint();
 	}
 	
 }
-
-class ArrowPaintPanel extends JPanel{
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-
-	List<Pair<Agent, Agent>> arrowList;
-	
-	AgentPanel fromPanel;
-	AgentPanel toPanel;
-	
-	
-	@Override
-	public void paintComponent(Graphics g){
-		super.paintComponent(g);
-//		System.out.println("Paint");
-//		g.setColor(Color.white);
-//		g.fillRect(0, 0, getWidth(), getHeight());
-
-		g.setColor(Color.RED);
-		synchronized (arrowList) {
-			for(Pair<Agent, Agent> agentPair:arrowList){
-//				AgentPanel fromPanel = agentMap.get(agentPair.getKey());
-//				AgentPanel toPanel = agentMap.get(agentPair.getValue());
-				
-				Graphics2D g2 = (Graphics2D)g;
-				BasicStroke stroke = new BasicStroke(4.0f);
-				g2.setStroke(stroke);
-				
-				double fcx = fromPanel.getBounds().getCenterX();
-				double fcy = fromPanel.getBounds().getCenterY();
-				if(fcy < getHeight()/3){
-					fcy = fromPanel.getBounds().getMaxY();
-				}
-				else if(fcy > getHeight()*2/3){
-					fcy = fromPanel.getBounds().getMinY();
-				}
-				
-				double tcx = toPanel.getBounds().getCenterX();
-				double tcy = toPanel.getBounds().getCenterY();
-				if(tcy < getHeight()/3){
-					tcy = toPanel.getBounds().getMaxY();
-				}
-				else if(tcy > getHeight()*2/3){
-					tcy = toPanel.getBounds().getMinY();
-				}
-
-				
-				double cx = getWidth()/2;
-				double cy = getHeight()/2;
-				
-				QuadCurve2D.Double curve = new QuadCurve2D.Double(fcx, fcy, cx, cy, tcx, tcy);
-				g2.draw(curve);
-
-			}
-		}
-		super.paintComponent(g);
-
-	}
-}
+//
+//class ArrowPaintPanel extends JPanel{
+//	/**
+//	 * 
+//	 */
+//	private static final long serialVersionUID = 1L;
+//
+//	List<Pair<Agent, Agent>> arrowList;
+//	
+//	AgentPanel fromPanel;
+//	AgentPanel toPanel;
+//	
+//	
+//	@Override
+//	public void paintComponent(Graphics g){
+//		super.paintComponent(g);
+////		System.out.println("Paint");
+////		g.setColor(Color.white);
+////		g.fillRect(0, 0, getWidth(), getHeight());
+//
+//		g.setColor(Color.RED);
+//		synchronized (arrowList) {
+//			for(Pair<Agent, Agent> agentPair:arrowList){
+////				AgentPanel fromPanel = agentMap.get(agentPair.getKey());
+////				AgentPanel toPanel = agentMap.get(agentPair.getValue());
+//				
+//				Graphics2D g2 = (Graphics2D)g;
+//				BasicStroke stroke = new BasicStroke(4.0f);
+//				g2.setStroke(stroke);
+//				
+//				double fcx = fromPanel.getBounds().getCenterX();
+//				double fcy = fromPanel.getBounds().getCenterY();
+//				if(fcy < getHeight()/3){
+//					fcy = fromPanel.getBounds().getMaxY();
+//				}
+//				else if(fcy > getHeight()*2/3){
+//					fcy = fromPanel.getBounds().getMinY();
+//				}
+//				
+//				double tcx = toPanel.getBounds().getCenterX();
+//				double tcy = toPanel.getBounds().getCenterY();
+//				if(tcy < getHeight()/3){
+//					tcy = toPanel.getBounds().getMaxY();
+//				}
+//				else if(tcy > getHeight()*2/3){
+//					tcy = toPanel.getBounds().getMinY();
+//				}
+//
+//				
+//				double cx = getWidth()/2;
+//				double cy = getHeight()/2;
+//				
+//				QuadCurve2D.Double curve = new QuadCurve2D.Double(fcx, fcy, cx, cy, tcx, tcy);
+//				g2.draw(curve);
+//
+//			}
+//		}
+//		super.paintComponent(g);
+//
+//	}
+//}
 
 

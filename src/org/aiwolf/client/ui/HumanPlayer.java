@@ -2,23 +2,19 @@ package org.aiwolf.client.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-
 import java.awt.Dimension;
-import java.io.IOException;
-import java.util.LinkedHashMap;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
-import org.aiwolf.client.base.smpl.SampleRoleAssignPlayer;
+import org.aiwolf.client.lib.TemplateTalkFactory.TalkType;
 import org.aiwolf.client.lib.Topic;
 import org.aiwolf.client.lib.Utterance;
-import org.aiwolf.client.ui.bin.HumanPlayerStarter;
 import org.aiwolf.client.ui.res.AIWolfResource;
 import org.aiwolf.client.ui.res.DefaultResource;
-import org.aiwolf.client.ui.res.JapaneseResource;
 import org.aiwolf.common.data.Agent;
 import org.aiwolf.common.data.Player;
 import org.aiwolf.common.data.Role;
@@ -28,7 +24,6 @@ import org.aiwolf.common.data.Talk;
 import org.aiwolf.common.data.Team;
 import org.aiwolf.common.net.GameInfo;
 import org.aiwolf.common.net.GameSetting;
-import org.aiwolf.common.util.Counter;
 
 public class HumanPlayer extends JFrame implements Player{
 
@@ -73,6 +68,12 @@ public class HumanPlayer extends JFrame implements Player{
 	InformationPanel infoPanel;
 	JPanel agentPanel;
 	UserActionPanel userActionPanel;
+
+	/**
+	 * 自動ボタン
+	 */
+	NextButtonPanel nextButtonPanel;
+
 //	TalkPanel talkPanel;
 	
 	GameInfo gameInfo;
@@ -136,7 +137,8 @@ public class HumanPlayer extends JFrame implements Player{
 		userActionPanel = new UserActionPanel(resource);
 		userActionPanel.setPreferredSize(new Dimension(HumanPlayer.PANEL_WIDTH, 50));
 
-		
+		nextButtonPanel = new NextButtonPanel();
+		nextButtonPanel.setPreferredSize(new Dimension(HumanPlayer.PANEL_WIDTH, 50));
 //		mainPanel.add(infoPanel, BorderLayout.NORTH);
 ////		mainPanel.add(talkPanel, BorderLayout.CENTER);
 //		mainPanel.add(userActionPanel, BorderLayout.SOUTH);
@@ -145,6 +147,21 @@ public class HumanPlayer extends JFrame implements Player{
 		mainPanel.add(userActionPanel, BorderLayout.SOUTH);
 		
 		getContentPane().add(mainPanel, BorderLayout.CENTER);
+		
+		
+		
+		
+//		stepActionPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+//		nextButton = new JButton("NEXT");
+//		nextButton.addActionListener(this);
+//		autoButton = new JButton("Auto");
+//		autoButton.addActionListener(this);
+//		skipAllButton = new JButton("SKIP ALL");
+//		skipAllButton.addActionListener(this);
+//		stepActionPanel.add(nextButton);
+//		stepActionPanel.add(autoButton);
+//		stepActionPanel.add(skipAllButton);
+		
 	}
 
 	@Override
@@ -186,8 +203,48 @@ public class HumanPlayer extends JFrame implements Player{
 	 * @param gameInfo
 	 */
 	protected void updateTalk(GameInfo gameInfo) {
-		infoPanel.updateTalk(gameInfo.getDay(), gameInfo.getTalkList());
-		infoPanel.updateWhisper(gameInfo.getDay(), gameInfo.getWhisperList());
+//		infoPanel.updateTalk(gameInfo.getDay(), gameInfo.getTalkList());
+//		infoPanel.updateWhisper(gameInfo.getDay(), gameInfo.getWhisperList());
+		for(int i = infoPanel.getLastTalkIdx()+1; i < gameInfo.getTalkList().size(); i++){
+//			List<Talk> subList = gameInfo.getTalkList().subList(0, i+1);
+//			boolean isUpdated = infoPanel.updateTalk(gameInfo.getDay(), subList);
+			boolean isUpdated = infoPanel.updateTalk(gameInfo.getDay(), gameInfo.getTalkList().get(i), TalkType.TALK);
+			if(isUpdated){
+//				waitForNext();
+				waitSecond();
+				infoPanel.clearArrow();
+			}
+		}
+
+		infoPanel.update(gameInfo);
+
+		for(int i = infoPanel.getLastWhisperIdx(); i < gameInfo.getWhisperList().size(); i++){
+//			List<Talk> subList = gameInfo.getWhisperList().subList(0, i+1);
+//			boolean isUpdated = infoPanel.updateWhisper(gameInfo.getDay(), subList);
+			boolean isUpdated = infoPanel.updateTalk(gameInfo.getDay(), gameInfo.getWhisperList().get(i), TalkType.WHISPER);
+			if(isUpdated){
+				waitSecond();
+				infoPanel.clearArrow();
+//				waitForNext();
+			}
+		}
+		infoPanel.scrollToTail();
+//		talkPanel.updateWhisper(gameInfo.getDay(), gameInfo.getWhisperList());
+	}
+
+	protected void waitSecond() {
+		mainPanel.remove(userActionPanel);
+		mainPanel.add(nextButtonPanel, BorderLayout.SOUTH);
+		nextButtonPanel.repaint();
+		nextButtonPanel.waitForNext();
+		mainPanel.remove(nextButtonPanel);
+		mainPanel.add(userActionPanel, BorderLayout.SOUTH);
+//		try {
+//			Thread.sleep(WAIT_TIME);
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		}
+		
 	}
 
 	@Override
@@ -203,6 +260,7 @@ public class HumanPlayer extends JFrame implements Player{
 
 	@Override
 	public void dayStart() {
+		nextButtonPanel.auto(false);
 		userActionPanel.clear();
 		infoPanel.dayStart(gameInfo);
 		userActionPanel.dayStart(gameInfo);

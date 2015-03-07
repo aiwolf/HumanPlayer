@@ -26,8 +26,8 @@ public class HumanPlayerStarter {
 	 * @throws IOException 
 	 */
 	public static void main(String[] args) throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException {
-//		Role role = null;
-		Role role = Role.WEREWOLF;
+		Role role = null;
+//		Role role = Role.WEREWOLF;
 		HumanPlayer humanPlayer = new HumanPlayer(new JapaneseResource());
 //		HumanPlayer humanPlayer = new HumanPlayer(new DefaultResource());
 		String defaultClassName = SampleRoleAssignPlayer.class.getName();

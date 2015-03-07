@@ -1,5 +1,7 @@
 package org.aiwolf.client.ui;
 
+import inaba.player.InabaPlayer;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -9,20 +11,24 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import org.aiwolf.client.lib.Topic;
 import org.aiwolf.client.lib.Utterance;
+import org.aiwolf.client.lib.TemplateTalkFactory.TalkType;
 import org.aiwolf.client.ui.res.AIWolfResource;
 import org.aiwolf.client.ui.res.JapaneseResource;
 import org.aiwolf.common.data.Agent;
@@ -58,7 +64,8 @@ public class GameFrame extends JFrame implements GameLogger, ActionListener{
 		String timeString = CalendarTools.toDateTime(System.currentTimeMillis()).replaceAll("[\\s-/:]", "");
 		
 		List<Player> list = new ArrayList<Player>();
-		for(int i = 0; i < 5; i++){
+		for(int i = 0; i < 13; i++){
+//			list.add(new InabaPlayer());
 			list.add(new KajiRoleAssignPlayer());
 		}
 		String logDir = "./log";
@@ -134,7 +141,7 @@ public class GameFrame extends JFrame implements GameLogger, ActionListener{
 	protected AIWolfGame game;
 	
 	protected InformationPanel infoPanel;
-	protected JPanel agentPanel;
+//	protected JPanel agentPanel;
 	protected UserActionPanel userActionPanel;
 //	protected TalkPanel talkPanel;
 
@@ -152,22 +159,16 @@ public class GameFrame extends JFrame implements GameLogger, ActionListener{
 	
 	protected GameInfo gameInfo;
 
-	protected boolean skip;
-
 	/**
 	 * 
 	 */
-	protected boolean step;
-
-	protected long waitTime = DEFAULT_WAIT_TIME;
-
-	protected JButton autoButton;
-	
-	protected JButton nextButton;
-
-	protected JButton skipAllButton;
-
-	protected JPanel stepActionPanel;
+//	protected boolean skip;
+//	protected boolean step;
+//	protected long waitTime = DEFAULT_WAIT_TIME;
+//	protected JButton autoButton;
+//	protected JButton nextButton;
+//	protected JButton skipAllButton;
+	protected NextButtonPanel stepActionPanel;
 
 	
 	/**
@@ -192,7 +193,10 @@ public class GameFrame extends JFrame implements GameLogger, ActionListener{
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		mainPanel = new JPanel();
+		mainPanel.setOpaque(false);
+		mainPanel.setDoubleBuffered(true);
 		mainPanel.setLayout(new BorderLayout());
+		mainPanel.setBackground(Color.WHITE);
 //		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
 
 		infoPanel = new InformationPanel(resource);
@@ -201,42 +205,55 @@ public class GameFrame extends JFrame implements GameLogger, ActionListener{
 //		talkPanel = new TalkPanel(resource);
 //		talkPanel.setPreferredSize(new Dimension(HumanPlayer.PANEL_WIDTH, 200));
 
-		userActionPanel = new UserActionPanel(resource);
-		userActionPanel.setPreferredSize(new Dimension(HumanPlayer.PANEL_WIDTH, ACTION_PANEL_HEIGHT));
+//		userActionPanel = new UserActionPanel(resource);
+//		userActionPanel.setPreferredSize(new Dimension(HumanPlayer.PANEL_WIDTH, ACTION_PANEL_HEIGHT));
+
+		JPanel titlePanel = new JPanel();
+		titlePanel.setLayout(new BoxLayout(titlePanel, BoxLayout.X_AXIS));
+		JPanel logoPanel = new JPanel(new FlowLayout());
+		URL url=getClass().getClassLoader().getResource("img/aiwolfLogo.png");
+		ImageIcon logoIcon = new ImageIcon(url);
+		JLabel logoLabel = new JLabel(logoIcon);
+		logoPanel.add(logoLabel);
+		logoPanel.setBackground(new Color(196,196, 196));
+//		titlePanel.add(logoLabel);
+//		titlePanel.setBackground(new Color(196,196, 196));
+		titlePanel.add(logoPanel);
+
 		
+		mainPanel.add(titlePanel, BorderLayout.NORTH);
 		mainPanel.add(infoPanel, BorderLayout.CENTER);
 //		mainPanel.add(talkPanel, BorderLayout.CENTER);
-		mainPanel.add(userActionPanel, BorderLayout.SOUTH);
+//		mainPanel.add(userActionPanel, BorderLayout.SOUTH);
 
-		getContentPane().add(mainPanel, BorderLayout.CENTER);
-	
-		nextButton = new JButton("NEXT");
-		nextButton.addActionListener(this);
-		
-		autoButton = new JButton("Auto");
-		autoButton.addActionListener(this);
+//		nextButton = new JButton("NEXT");
+//		nextButton.addActionListener(this);
+//		
+//		autoButton = new JButton("Auto");
+//		autoButton.addActionListener(this);
 
-		skipAllButton = new JButton("SKIP ALL");
-		skipAllButton.addActionListener(this);
-		stepActionPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		stepActionPanel.add(nextButton);
-		stepActionPanel.add(autoButton);
-		stepActionPanel.add(skipAllButton);
-		step = false;
-		skip = false;
-		
+		stepActionPanel = new NextButtonPanel();
+		stepActionPanel.setPreferredSize(new Dimension(HumanPlayer.PANEL_WIDTH, ACTION_PANEL_HEIGHT));
 		this.mainPanel.add(stepActionPanel, BorderLayout.SOUTH);
 		
+		getContentPane().add(mainPanel, BorderLayout.CENTER);
 		
+
 	}
 	
 	public void initialize(GameInfo gameInfo, GameSetting gameSetting){
 		this.gameSetting = gameSetting;
+
 		infoPanel.initialize(gameInfo, gameSetting);
-		userActionPanel.initialize(gameInfo, gameSetting);
+//		userActionPanel.initialize(gameInfo, gameSetting);
 //		infoPanel.talkPanel.initialize(gameInfo, gameSetting);
-		setVisible(true);
 		update(gameInfo);
+		
+		setVisible(true);
+//		infoPanel.setWaitListener(this);
+		infoPanel.setWaitListener(stepActionPanel);
+		
+		infoPanel.firstInformation(gameInfo, gameSetting);
 		
 //		samplePlayer.initialize(gameInfo, gameSetting);
 	}
@@ -245,7 +262,7 @@ public class GameFrame extends JFrame implements GameLogger, ActionListener{
 		infoPanel.update(gameInfo);
 //		infoPanel.talkPanel.update(gameInfo);
 //		updateTalk(gameInfo);
-		userActionPanel.update(gameInfo);
+//		userActionPanel.update(gameInfo);
 //		infoPanel.talkPanel.scrollToTail();
 		
 		for(Talk talk:gameInfo.getTalkList()){
@@ -257,37 +274,49 @@ public class GameFrame extends JFrame implements GameLogger, ActionListener{
 		
 		this.gameInfo = gameInfo;
 
-		repaint();
+//		repaint();
 	}
 
 	
+	
+	Talk lastTalk;
+	Talk lastWhisper;
 	/**
 	 * 
 	 * @param gameInfo
 	 */
 	protected void updateTalk(GameInfo gameInfo) {
-		for(int i = infoPanel.getLastTalkIdx(); i < gameInfo.getTalkList().size(); i++){
-			List<Talk> subList = gameInfo.getTalkList().subList(0, i+1);
-			boolean isUpdated = infoPanel.updateTalk(gameInfo.getDay(), subList);
+		for(int i = infoPanel.getLastTalkIdx()+1; i < gameInfo.getTalkList().size(); i++){
+			Talk talk = gameInfo.getTalkList().get(i);
+			
+			if(lastTalk != null && lastTalk.getAgent() == talk.getAgent() && lastTalk.getContent().equals(talk.getContent()) && lastTalk.getDay() == talk.getDay()){
+				continue;
+			}
+			boolean isUpdated = infoPanel.updateTalk(gameInfo.getDay(), talk, TalkType.TALK);
 			if(isUpdated){
-				waitForNext();
+				lastTalk = talk;
+				stepActionPanel.waitForNext();
 //				waitSecond();
 			}
 		}
-//		talkPanel.updateTalk(gameInfo.getDay(), gameInfo.getTalkList());
+
+		infoPanel.update(gameInfo);
+
 		for(int i = infoPanel.getLastWhisperIdx(); i < gameInfo.getWhisperList().size(); i++){
-			List<Talk> subList = gameInfo.getWhisperList().subList(0, i+1);
-			boolean isUpdated = infoPanel.updateWhisper(gameInfo.getDay(), subList);
-			if(isUpdated){
-//				waitSecond();
-				waitForNext();
+			Talk whisper = gameInfo.getWhisperList().get(i);
+
+			if(lastWhisper != null){
+				if(lastWhisper.getAgent() == whisper.getAgent() && lastWhisper.getContent().equals(whisper.getContent()) && lastWhisper.getDay() == whisper.getDay()){
+					continue;
+				}
 			}
-		}
-		try {
-			Thread.sleep(10);
-		} catch (InterruptedException e) {
-			// TODO 自動生成された catch ブロック
-			e.printStackTrace();
+			
+			boolean isUpdated = infoPanel.updateTalk(gameInfo.getDay(), whisper, TalkType.WHISPER);
+			if(isUpdated){
+				lastWhisper = whisper;
+//				waitSecond();
+				stepActionPanel.waitForNext();
+			}
 		}
 		infoPanel.scrollToTail();
 //		talkPanel.updateWhisper(gameInfo.getDay(), gameInfo.getWhisperList());
@@ -295,39 +324,70 @@ public class GameFrame extends JFrame implements GameLogger, ActionListener{
 
 	
 	public void dayStart() {
-		userActionPanel.clear();
+		if(gameInfo.getDay() != 0){
+			stepActionPanel.auto(false);
+		}
+//		userActionPanel.clear();
 		infoPanel.dayStart(gameInfo);
-		userActionPanel.dayStart(gameInfo);
+//		if(infoPanel.voteResult(gameInfo)){
+//			waitForNext();
+//		}
+		
+//		userActionPanel.dayStart(gameInfo);
 	}
-
-	/**
-	 * Wait until next button is pushed
-	 */
-	protected void waitForNext() {
-		if(skip){
-			waitSecond();
-			return;
-		}
-		step = false;
-		nextButton.setEnabled(true);
-		while(!step){
-			try {
-				Thread.sleep(10);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-		step = false;
-		nextButton.setEnabled(false);
-	}
-
-	protected void waitSecond(){
-		try {
-			Thread.sleep(waitTime);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
+//
+//	/**
+//	 * Wait until next button is pushed
+//	 * 
+//	 */
+//	public void waitForNext() {
+//		stepActionPanel.waitForNext();
+////		if(skip){
+////			waitSecond();
+////			return;
+////		}
+////		step = false;
+////		nextButton.setEnabled(true);
+////		while(!step){
+////			try {
+////				Thread.sleep(10);
+////			} catch (InterruptedException e) {
+////				e.printStackTrace();
+////			}
+////		}
+////		step = false;
+////		nextButton.setEnabled(false);
+//	}
+//
+//	protected void waitSecond(){
+//		stepActionPanel.waitSecond();
+//
+////		try {
+////			Thread.sleep(waitTime);
+////		} catch (InterruptedException e) {
+////			e.printStackTrace();
+////		}
+//	}
+//	
+//
+//	/**
+//	 * @param setAuto
+//	 */
+//	private void auto(boolean setAuto) {
+//		stepActionPanel.auto(setAuto);
+////		if(!setAuto){
+////			skip = false;
+////			step = false;
+////			waitTime = DEFAULT_WAIT_TIME;
+////			autoButton.setText("Auto");
+////		}
+////		else{
+////			step = true;
+////			skip = true;
+////			autoButton.setText("Stop");
+////		}
+//	}
+//	
 
 	int lastDay = -1;
 	@Override
@@ -357,7 +417,7 @@ public class GameFrame extends JFrame implements GameLogger, ActionListener{
 
 	@Override
 	public void close() {
-		infoPanel.dayStart(gameInfo);
+//		infoPanel.dayStart(gameInfo);
 		int humanSide = 0;
 		int wolfSide = 0;
 		for(Agent agent:gameInfo.getAgentList()){
@@ -381,38 +441,34 @@ public class GameFrame extends JFrame implements GameLogger, ActionListener{
 		}
 
 		infoPanel.setWinner(gameInfo.getDay(), winner);
-		waitSecond();
+		stepActionPanel.waitSecond();
 		infoPanel.scrollToTail();
 
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if(e.getSource() == nextButton){
-			step = true;
-			nextButton.setEnabled(false);
-		}
-		else if(e.getSource() == autoButton){
-			if(skip){
-				skip = false;
-				step = false;
-				waitTime = DEFAULT_WAIT_TIME;
-				autoButton.setText("Auto");
-			}
-			else{
-				step = true;
-				skip = true;
-				autoButton.setText("Stop");
-			}
-		}
-		else if(e.getSource() == skipAllButton){
-			step = true;
-			skip = true;
-			waitTime = 0;
-		}
-		
+//		if(e.getSource() == nextButton){
+//			step = true;
+//			nextButton.setEnabled(false);
+//		}
+//		else if(e.getSource() == autoButton){
+//			if(!skip){
+//				stepActionPanel.auto(true);
+//			}
+//			else{
+//				stepActionPanel.auto(false);
+//			}
+//		}
+//		else if(e.getSource() == skipAllButton){
+////			step = true;
+////			skip = true;
+//			waitTime = 0;
+//			stepActionPanel.auto(true);
+//		}
+//		
 	}
-	
+
 	
 	/**
 	 * @return game

@@ -111,20 +111,6 @@ public class TalkPanel extends JPanel {
 	AIWolfResource resource;
 	Map<Agent, ImageIcon> imageIconMap;
 
-	TalkItemListener itemListener;
-	
-	static final Comparator<Vote> voteComparator = new Comparator<Vote>() {
-		@Override
-		public int compare(Vote o1, Vote o2) {
-			if(o1.getTarget() == o2.getTarget()){
-				return o1.getAgent().compareTo(o2.getAgent());
-			}
-			else{
-				return o1.getTarget().compareTo(o2.getTarget());
-			}
-		}
-	};
-
 	public TalkPanel(AIWolfResource resource) {
 		this.resource = resource;
 //		talkConverter = new DefaultTalkConverter();
@@ -162,7 +148,7 @@ public class TalkPanel extends JPanel {
 //		}
 		
 		Counter<Role> counter = new Counter<Role>(gameSetting.getRoleNumMap());
-		addText(gameInfo.getDay(), resource.getRoleInformation(counter));
+//		addText(gameInfo.getDay(), resource.getRoleInformation(counter));
 
 		addAgentInformation(gameInfo.getDay(), gameInfo.getAgent(), String.format("%s\n",resource.getFirstText(gameInfo.getAgent(), gameInfo.getRole())), HumanPlayer.PLAYER_COLOR);
 
@@ -179,80 +165,7 @@ public class TalkPanel extends JPanel {
 		this.gameInfo = gameInfo;
 		gameInfoMap.put(gameInfo.getDay(), gameInfo);
 
-		int day = gameInfo.getDay();
-//		buf.append("Day "+gameInfo.getDay());
-//		buf.append("\n");
 		
-		addText(day, "Day "+gameInfo.getDay());
-		
-		///////////////////////////////////////////////////////
-		//Vote
-//		StringBuffer voteText = new StringBuffer();
-		TreeSet<Vote> voteSet = new TreeSet<>(voteComparator);
-		voteSet.addAll(gameInfo.getVoteList());
-		for(Vote vote:voteSet){
-			Color color = HumanPlayer.TALK_COLOR;
-			if(vote.getAgent() == gameInfo.getAgent()){
-				color = HumanPlayer.PLAYER_COLOR;
-			}
-			else if(gameInfo.getRoleMap().get(vote.getAgent()) == gameInfo.getRole()){
-				color = HumanPlayer.FRIEND_COLOR;
-			}
-			
-			addText(day, resource.convertVote(vote), color);
-//			voteText.append(resource.convertVote(vote));
-//			voteText.append("\n");
-		}
-		if(gameInfo.getExecutedAgent() != null){
-//			voteText.append(resource.convertExecuted(gameInfo.getExecutedAgent()));
-			addAgentInformation(day, gameInfo.getExecutedAgent(), resource.convertExecuted(gameInfo.getExecutedAgent()));
-		}
-//		addText(day, voteText.toString());
-		
-		///////////////////////////////////////////////////////
-		//Attack
-		if(gameInfo.getGuardedAgent() != null){
-			addAgentInformation(day, gameInfo.getGuardedAgent(), resource.convertGuarded(gameInfo.getGuardedAgent()));
-		}
-		///////////////////////////////////////////////////////
-		//Guard
-		TreeSet<Vote> attackVoteSet = new TreeSet<>(voteComparator);
-		attackVoteSet.addAll(gameInfo.getAttackVoteList());
-		for(Vote attackVote:attackVoteSet){
-//			Agent agent = vote.getAgent();
-//			Agent target = vote.getTarget();
-//			buf.append(agent+" attacked to "+target);
-			addText(day, resource.convertAttackVote(attackVote), HumanPlayer.WHISPER_COLOR);
-//			attackText.append("\n");
-		}
-//		addText(day, attackText.toString(), HumanPlayer.FRIEND_COLOR);
-		if(gameInfo.getAttackedAgent() != null){
-			addAgentInformation(day, gameInfo.getAttackedAgent(), resource.convertAttacked(gameInfo.getAttackedAgent()));
-		}
-		else if(gameInfo.getDay() > 1){
-			addText(day, resource.convertAttacked(gameInfo.getAttackedAgent()));
-		}
-		
-		///////////////////////////////////////////////////////
-		//Divine Medium
-		if(gameInfo.getDivineResult() != null){
-//			Agent agent = gameInfo.getDivineResult().getAgent();
-			Agent target = gameInfo.getDivineResult().getTarget();
-			
-			addAgentInformation(day, target, resource.convertDivined(gameInfo.getDivineResult()));
-//			divineMediumText.append(resource.convertDivined(gameInfo.getDivineResult()));
-//			divineMediumText.append("\n");
-		}
-		if(gameInfo.getMediumResult() != null){
-			Agent target = gameInfo.getMediumResult().getTarget();
-			addAgentInformation(day, target, resource.convertMedium(gameInfo.getMediumResult()));
-		}
-		
-		StringBuffer divineMediumText = new StringBuffer();
-		divineMediumText.append(resource.aliveRemain(gameInfo.getAliveAgentList().size()));
-//		divineMediumText.append("\n");
-
-		addText(day, divineMediumText.toString());
 	}
 	
 	/**
@@ -264,12 +177,10 @@ public class TalkPanel extends JPanel {
 		JList talkList = getTalkArea(day);
 		DefaultListModel<JComponent> listModel = (DefaultListModel<JComponent>) talkList.getModel();
 		listModel.addElement(component);
+		dailyTalkPane.setSelectedIndex(dailyTalkPane.getComponentCount()-1);
+		
 		JScrollPane scrollPane = (JScrollPane)dailyTalkPane.getSelectedComponent();
 		scrollToTail(scrollPane);
-		
-		if(itemListener != null){
-			itemListener.addItem(component);
-		}
 	}
 
 	/**
@@ -315,36 +226,49 @@ public class TalkPanel extends JPanel {
 	 */
 	public void addAgentInformation(int day, Agent agent, String information, Color color){
 		if(information != null && !information.trim().isEmpty()){
-			JPanel logPanel = new JPanel();
-			SpringLayout layout = new SpringLayout();
-			logPanel.setLayout(layout);
-
-			ImageIcon imageIcon = getAgentIcon(agent);
-			JLabel iconLabel = new JLabel(imageIcon);
-			JTextArea textLabel = new JTextArea(information);
-			textLabel.setBackground(color);
-			
-			layout.putConstraint(SpringLayout.NORTH, iconLabel, 0, SpringLayout.NORTH, logPanel);
-			layout.putConstraint(SpringLayout.WEST, iconLabel, 0, SpringLayout.WEST, logPanel);
-
-			layout.putConstraint(SpringLayout.NORTH, textLabel, 0, SpringLayout.NORTH, iconLabel);
-			layout.putConstraint(SpringLayout.WEST, textLabel, 0, SpringLayout.EAST, iconLabel);
-			
-			logPanel.add(iconLabel);
-			logPanel.add(textLabel);
-			
-			logPanel.setBackground(color);
-			
-			int width = talkAreaMap.get(day).getWidth();
-			int height = Math.max(imageIcon.getIconHeight(), (textLabel.getHeight()+1));
-			
-			logPanel.setSize(width, height);
-			logPanel.setPreferredSize(new Dimension(width, height));
-
-			logPanel.setVisible(true);
+			JPanel logPanel = createLogPanel(day, agent, information, color);
 //			panel.setBorder(new LineBorder(Color.BLACK, 1));
 			addItem(day, logPanel);
 		}
+	}
+
+	/**
+	 * 
+	 * @param day
+	 * @param agent
+	 * @param information
+	 * @param color
+	 * @return
+	 */
+	public JPanel createLogPanel(int day, Agent agent, String information, Color color) {
+		JPanel logPanel = new JPanel();
+		SpringLayout layout = new SpringLayout();
+		logPanel.setLayout(layout);
+		logPanel.setBackground(color);
+
+		ImageIcon imageIcon = getAgentIcon(agent);
+		JLabel iconLabel = new JLabel(imageIcon);
+		JTextArea textLabel = new JTextArea(information);
+		textLabel.setBackground(new Color(0, 0, 0, 0));
+//		textLabel.setBackground(color);
+		
+		layout.putConstraint(SpringLayout.NORTH, iconLabel, 0, SpringLayout.NORTH, logPanel);
+		layout.putConstraint(SpringLayout.WEST, iconLabel, 0, SpringLayout.WEST, logPanel);
+
+		layout.putConstraint(SpringLayout.NORTH, textLabel, 0, SpringLayout.NORTH, iconLabel);
+		layout.putConstraint(SpringLayout.WEST, textLabel, 0, SpringLayout.EAST, iconLabel);
+		
+		logPanel.add(iconLabel);
+		logPanel.add(textLabel);
+		
+		int width = getTalkArea(day).getWidth();
+		int height = Math.max(imageIcon.getIconHeight(), (textLabel.getHeight()+1));
+		
+		logPanel.setSize(width, height);
+		logPanel.setPreferredSize(new Dimension(width, height));
+
+//		logPanel.setVisible(true);
+		return logPanel;
 	}
 
 	
@@ -455,6 +379,15 @@ public class TalkPanel extends JPanel {
 		return talkPanel;
 	}
 
+	public JTextArea createTextPanel(int day, String convertAttacked, Color color) {
+		JTextArea textArea = new JTextArea(convertAttacked);
+//			textArea.setBorder(new LineBorder(Color.BLACK, 1));
+		textArea.setBackground(color);
+		return textArea;
+	}
+
+
+	
 	/**
 	 * 
 	 * @param agent
@@ -484,8 +417,6 @@ public class TalkPanel extends JPanel {
 	 * @return is updated
 	 */
 	public boolean updateTalk(int day, List<Talk> talkList){
-//		JTextArea talkArea = getTalkArea(day);
-
 		boolean isUpdated = false;
 		for(int i = lastTalkIdx; i < talkList.size(); i++){
 			Talk talk = talkList.get(i);
@@ -536,9 +467,11 @@ public class TalkPanel extends JPanel {
 	 * @param day
 	 */
 	public void scrollToTail(){
-		repaint();
-		JScrollPane scrollPane = (JScrollPane)dailyTalkPane.getComponent(dailyTalkPane.getComponentCount()-1);
-		scrollToTail(scrollPane);
+//		repaint();
+		if(dailyTalkPane.getComponentCount() > 0){
+			JScrollPane scrollPane = (JScrollPane)dailyTalkPane.getComponent(dailyTalkPane.getComponentCount()-1);
+			scrollToTail(scrollPane);
+		}
 	}
 	/**
 	 * Scroll Bar to Tail
@@ -551,7 +484,7 @@ public class TalkPanel extends JPanel {
 //			viewPort.set
 			if(bar != null){
 				bar.setValue(bar.getMaximum());
-				scrollPane.repaint();
+//				scrollPane.repaint();
 //				System.err.println(bar.getMaximum()+"\t"+bar.getValue());
 			}
 		}
@@ -572,6 +505,7 @@ public class TalkPanel extends JPanel {
 			talkAreaMap.put(day, talkArea);
 			JScrollPane scrollPane = new JScrollPane();
 			scrollPane.setViewportView(talkAreaMap.get(day));
+			scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 			dailyTalkPane.addTab("Day"+day, scrollPane);
 			lastTalkIdx = 0;
 		}
@@ -625,18 +559,5 @@ public class TalkPanel extends JPanel {
 		return lastWhisperIdx;
 	}
 
-	/**
-	 * @return itemListener
-	 */
-	public TalkItemListener getItemListener() {
-		return itemListener;
-	}
-
-	/**
-	 * @param itemListener セットする itemListener
-	 */
-	public void setItemListener(TalkItemListener itemListener) {
-		this.itemListener = itemListener;
-	}
 	
 }

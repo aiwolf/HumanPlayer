@@ -22,10 +22,12 @@ public class AgentPanel extends JPanel {
 
 	private static final Color PLAYER_ALIVE = HumanPlayer.PLAYER_COLOR;
 
+	private static final Color WOLF_ALIVE = Color.GRAY;
+
+
 	private static final Color NON_PLAYER_DEAD = new Color(196, 196, 196);
 
 	private static final Color FRIEND_DEAD = new Color(196, 196, 128);
-
 
 	private static final Color PLAYER_DEAD = new Color(196, 196, 64);
 	
@@ -86,8 +88,8 @@ public class AgentPanel extends JPanel {
 			roleLabel.setText(resource.convert(role));
 		}
 		
-		Border border = new BevelBorder(BevelBorder.RAISED);
-		setBorder(border);
+//		Border border = new BevelBorder(BevelBorder.RAISED);
+//		setBorder(border);
 		
 		Dimension dimension = new Dimension(PANEL_WIDTH, PANEL_HEIGHT);
 		setSize(dimension);
@@ -96,6 +98,7 @@ public class AgentPanel extends JPanel {
 		setMinimumSize(dimension);
 		
 		this.isPlayer = isPlayer;
+		setStatus(Status.ALIVE);
 	}
 
 
@@ -150,9 +153,14 @@ public class AgentPanel extends JPanel {
 			else if(role != null){
 				setBackground(FRIEND_ALIVE);
 			}
+			else if(role == Role.WEREWOLF){
+				setBackground(WOLF_ALIVE);
+			}
 			else{
 				setBackground(NON_PLAYER_ALIVE);
 			}
+			Border border = new BevelBorder(BevelBorder.RAISED);
+			setBorder(border);
 		}
 	}
 	

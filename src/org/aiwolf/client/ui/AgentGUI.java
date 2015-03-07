@@ -222,7 +222,7 @@ public class AgentGUI extends HumanPlayer implements ActionListener{
 		stepButton.setEnabled(false);
 	}
 
-	private void waitSecond(){
+	protected void waitSecond(){
 		try {
 			Thread.sleep(waitTime);
 		} catch (InterruptedException e) {

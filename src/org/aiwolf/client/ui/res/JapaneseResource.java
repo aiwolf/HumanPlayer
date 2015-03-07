@@ -359,7 +359,7 @@ public class JapaneseResource implements AIWolfResource {
 			return "村に光が差し込んだ！\nすべての人狼を退治することに成功した！\n村人の勝利だ";
 		}
 		else{
-			return "村は深い闇に包まれた．村人はすべて人狼達の胃袋に収まり，人狼はまた新たな犠牲者を求めて村を去って行った．\n人狼の勝利だ";
+			return "村は深い闇に包まれた．\n村人はすべて人狼達の胃袋に収まり，\n人狼はまた新たな犠牲者を求めて村を去って行った．\n人狼の勝利だ";
 		}
 	}
 
@@ -377,10 +377,12 @@ public class JapaneseResource implements AIWolfResource {
 
 	@Override
 	public String getRoleInformation(Map<Role, Integer> roleCounter) {
+		Role[] roleAry = new Role[]{Role.VILLAGER, Role.WEREWOLF, Role.SEER, Role.MEDIUM, Role.BODYGUARD, Role.POSSESSED, Role.FREEMASON};
+		
 		StringBuffer buf = new StringBuffer();
 		buf.append("この村には\n");
 		String separator = "";
-		for(Role role:roleCounter.keySet()){
+		for(Role role:roleAry){
 			if(roleCounter.get(role) == 0){
 				continue;
 			}
@@ -401,5 +403,10 @@ public class JapaneseResource implements AIWolfResource {
 	@Override
 	public String convertExecutedDay(int day) {
 		return day+"日目に処刑";
+	}
+	
+	@Override
+	public String dayStart(int day) {
+		return day+"日目の朝が来た";
 	}
 }

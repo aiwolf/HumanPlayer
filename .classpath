@@ -5,5 +5,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/AIWolfClient"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/AIWolfCommon"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/AIWolfServer"/>
+	<classpathentry kind="lib" path="lib/InabaPlayerV2_4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

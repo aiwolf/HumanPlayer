@@ -340,4 +340,9 @@ public class DefaultResource implements AIWolfResource {
 	public String convertExecutedDay(int day) {
 		return "Executed@"+day;
 	}
+
+	@Override
+	public String dayStart(int day) {
+		return "Day "+day+" start";
+	}
 }

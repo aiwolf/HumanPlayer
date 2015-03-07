@@ -29,7 +29,7 @@ public class AgentImagePanel extends AgentPanel {
 	ImageIcon imageIcon;
 	JLabel iconLabel;
 	
-	static private final int IMG_WIDTH = 40;
+	static public final int IMG_WIDTH = 40;
 	
 	public AgentImagePanel(Agent agent, Role role, boolean isPlayer, AIWolfResource resource) {
 		init(agent, role, isPlayer, resource);
@@ -54,20 +54,6 @@ public class AgentImagePanel extends AgentPanel {
 	}
 	
 	protected void addLabel() {
-//		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-//		add(nameLabel);
-//		
-//		JPanel panel = new JPanel();
-//		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
-//		panel.add(iconLabel);
-//		JPanel nrpanel = new JPanel();
-//		nrpanel.setLayout(new BoxLayout(nrpanel, BoxLayout.Y_AXIS));
-//		nrpanel.add(statusLabel);
-//		nrpanel.add(roleLabel);
-//		panel.add(nrpanel);
-//		add(panel);
-//		add(infoLabel);
-////		add(iconLabel);
 		SpringLayout layout = new SpringLayout();
 		setLayout(layout);
 		

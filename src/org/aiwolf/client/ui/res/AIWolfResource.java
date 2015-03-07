@@ -185,5 +185,11 @@ public interface AIWolfResource {
 	 */
 	String convertExecutedDay(int day);
 
+	/**
+	 * @param 
+	 * @return 
+	 */
+	String dayStart(int day);
+
 	
 }

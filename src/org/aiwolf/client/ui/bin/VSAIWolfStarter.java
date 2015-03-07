@@ -178,6 +178,11 @@ public class VSAIWolfStarter {
 				playerMap.put(enemy, null);
 			}
 		}
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		RoleRequestStarter.start(playerMap, logDir);
 	}
 

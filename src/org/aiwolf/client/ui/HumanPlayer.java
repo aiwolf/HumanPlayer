@@ -1,6 +1,7 @@
 package org.aiwolf.client.ui;
 
 import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 
@@ -25,7 +26,7 @@ import org.aiwolf.common.data.Team;
 import org.aiwolf.common.net.GameInfo;
 import org.aiwolf.common.net.GameSetting;
 
-public class HumanPlayer extends JFrame implements Player{
+public class HumanPlayer extends JFrame implements Player, WaitListener{
 
 	/**
 	 * 
@@ -101,6 +102,10 @@ public class HumanPlayer extends JFrame implements Player{
 	 */
 	protected JPanel mainPanel;
 
+	private CardLayout buttonCardLayout;
+
+	private JPanel userActionAreaPanel;
+
 	/**
 	 * 
 	 */
@@ -130,25 +135,29 @@ public class HumanPlayer extends JFrame implements Player{
 		mainPanel.setLayout(new BorderLayout());
 
 		infoPanel = new InformationPanel(resource);
-//		infoPanel.setPreferredSize(new Dimension(HumanPlayerFrame.PANEL_WIDTH, AgentPanel.PANEL_HEIGHT*5));
-//		talkPanel = new TalkPanel(resource);
-//		talkPanel.setPreferredSize(new Dimension(HumanPlayer.PANEL_WIDTH, 200));
-//		talkPanel.setMaximumSize(new Dimension(HumanPlayerFrame.PANEL_WIDTH, 200));
+		userActionAreaPanel = new JPanel();
+		buttonCardLayout = new CardLayout();
+		userActionAreaPanel.setLayout(buttonCardLayout);
+		
 		userActionPanel = new UserActionPanel(resource);
 		userActionPanel.setPreferredSize(new Dimension(HumanPlayer.PANEL_WIDTH, 50));
 
 		nextButtonPanel = new NextButtonPanel();
 		nextButtonPanel.setPreferredSize(new Dimension(HumanPlayer.PANEL_WIDTH, 50));
-//		mainPanel.add(infoPanel, BorderLayout.NORTH);
+
+		userActionAreaPanel.setPreferredSize(new Dimension(HumanPlayer.PANEL_WIDTH, 50));
+		userActionAreaPanel.add(userActionPanel);
+		userActionAreaPanel.add(nextButtonPanel);
+		//		mainPanel.add(infoPanel, BorderLayout.NORTH);
 ////		mainPanel.add(talkPanel, BorderLayout.CENTER);
 //		mainPanel.add(userActionPanel, BorderLayout.SOUTH);
 		mainPanel.add(infoPanel, BorderLayout.CENTER);
-//		mainPanel.add(talkPanel, BorderLayout.CENTER);
-		mainPanel.add(userActionPanel, BorderLayout.SOUTH);
+//		mainPanel.add(userActionPanel, BorderLayout.SOUTH);
+		mainPanel.add(userActionAreaPanel, BorderLayout.SOUTH);
 		
 		getContentPane().add(mainPanel, BorderLayout.CENTER);
 		
-		
+		infoPanel.setWaitListener(this);
 		
 		
 //		stepActionPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -211,39 +220,44 @@ public class HumanPlayer extends JFrame implements Player{
 			boolean isUpdated = infoPanel.updateTalk(gameInfo.getDay(), gameInfo.getTalkList().get(i), TalkType.TALK);
 			if(isUpdated){
 //				waitForNext();
-				waitSecond();
+				infoPanel.scrollToTail();
+				waitForNext();
 				infoPanel.clearArrow();
 			}
 		}
 
-		infoPanel.update(gameInfo);
 
-		for(int i = infoPanel.getLastWhisperIdx(); i < gameInfo.getWhisperList().size(); i++){
+		for(int i = infoPanel.getLastWhisperIdx()+1; i < gameInfo.getWhisperList().size(); i++){
 //			List<Talk> subList = gameInfo.getWhisperList().subList(0, i+1);
 //			boolean isUpdated = infoPanel.updateWhisper(gameInfo.getDay(), subList);
 			boolean isUpdated = infoPanel.updateTalk(gameInfo.getDay(), gameInfo.getWhisperList().get(i), TalkType.WHISPER);
 			if(isUpdated){
-				waitSecond();
+				infoPanel.scrollToTail();
+				waitForNext();
 				infoPanel.clearArrow();
 //				waitForNext();
 			}
 		}
-		infoPanel.scrollToTail();
 //		talkPanel.updateWhisper(gameInfo.getDay(), gameInfo.getWhisperList());
 	}
 
-	protected void waitSecond() {
-		mainPanel.remove(userActionPanel);
-		mainPanel.add(nextButtonPanel, BorderLayout.SOUTH);
-		nextButtonPanel.repaint();
+	@Override
+	public void waitForNext() {
+		
+		buttonCardLayout.last(userActionAreaPanel);
+//		mainPanel.remove(userActionPanel);
+//		mainPanel.add(nextButtonPanel, BorderLayout.SOUTH);
+//		System.out.println("Add Next Button Panel");
+
+//		nextButtonPanel.repaint();
+
 		nextButtonPanel.waitForNext();
-		mainPanel.remove(nextButtonPanel);
-		mainPanel.add(userActionPanel, BorderLayout.SOUTH);
-//		try {
-//			Thread.sleep(WAIT_TIME);
-//		} catch (InterruptedException e) {
-//			e.printStackTrace();
-//		}
+
+		buttonCardLayout.first(userActionAreaPanel);
+
+		userActionPanel.repaint();
+
+//		System.out.println("Add User Action Panel");
 		
 	}
 
@@ -260,12 +274,17 @@ public class HumanPlayer extends JFrame implements Player{
 
 	@Override
 	public void dayStart() {
-		nextButtonPanel.auto(false);
+		if(gameInfo.getDay() != 0){
+			nextButtonPanel.auto(false);
+		}
+		
 		userActionPanel.clear();
 		infoPanel.dayStart(gameInfo);
 		userActionPanel.dayStart(gameInfo);
 
 		remainTalk = gameSetting.getMaxTalk();
+		
+//		repaint();
 
 	}
 
@@ -354,6 +373,7 @@ public class HumanPlayer extends JFrame implements Player{
 	public void setTalkConverter(AIWolfResource talkConverter) {
 		this.resource = talkConverter;
 	}
+
 
 	
 	

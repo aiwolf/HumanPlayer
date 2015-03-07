@@ -1,6 +1,7 @@
 package org.aiwolf.client.ui.bin;
 
 import java.io.File;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import org.aiwolf.client.ui.AgentGUI;
+import org.aiwolf.client.ui.GameFrame;
 import org.aiwolf.client.ui.res.AIWolfResource;
 import org.aiwolf.client.ui.res.DefaultResource;
 import org.aiwolf.common.data.Player;
@@ -131,17 +132,18 @@ public class GUIRoleRequestStarter {
 	public static void start(Map<Player, Role> playerMap, String logDir, AIWolfResource resource) throws IOException {
 		String timeString = CalendarTools.toDateTime(System.currentTimeMillis()).replaceAll("[\\s-/:]", "");
 	
-		Player player = playerMap.keySet().iterator().next();
-		Role mainRole = playerMap.remove(player);
-		playerMap.put(new AgentGUI(player), mainRole);
+//		Player player = playerMap.keySet().iterator().next();
+//		Role mainRole = playerMap.remove(player);
+//		playerMap.put(new AgentGUI(player), mainRole);
 		
 		DirectConnectServer gameServer = new DirectConnectServer(playerMap);
 		GameSetting gameSetting = GameSetting.getDefaultGame(playerMap.size());
 		AIWolfGame game = new AIWolfGame(gameSetting, gameServer);
-		if(logDir != null){
-			File logFile = new File(String.format("%s/contest%s.log", logDir, timeString));
-			game.setLogFile(logFile);
-		}
+		game.setGameLogger(new GameFrame(resource, game));
+//		if(logDir != null){
+//			File logFile = new File(String.format("%s/contest%s.log", logDir, timeString));
+//			game.setLogFile(logFile);
+//		}
 		game.setRand(new Random());
 //		game.setShowConsoleLog(false);
 		game.start();

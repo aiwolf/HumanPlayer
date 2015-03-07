@@ -28,7 +28,7 @@ import org.aiwolf.server.bin.RoleRequestStarter;
  * @author tori
  *
  */
-public class AgentGUI extends HumanPlayer implements ActionListener{
+class AgentGUI extends HumanPlayer implements ActionListener{
 
 	/**
 	 * Start Human Agent Starter
@@ -205,7 +205,7 @@ public class AgentGUI extends HumanPlayer implements ActionListener{
 		
 	}
 	
-	private void waitForNext() {
+	public void waitForNext() {
 		if(skip){
 			return;
 		}
@@ -222,7 +222,7 @@ public class AgentGUI extends HumanPlayer implements ActionListener{
 		stepButton.setEnabled(false);
 	}
 
-	protected void waitSecond(){
+	public void waitForSecond(){
 		try {
 			Thread.sleep(waitTime);
 		} catch (InterruptedException e) {

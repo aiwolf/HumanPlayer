@@ -217,6 +217,7 @@ public class InformationPanel extends JPanel {
 				case INQUESTED:
 				case GUARDED:
 				case VOTE:
+				case ESTIMATE:
 					eventPanel.addArrow(talk.getAgent(), u.getTarget());
 					break;
 				default:

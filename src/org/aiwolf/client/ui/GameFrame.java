@@ -4,31 +4,27 @@ import inaba.player.InabaPlayer;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
+import org.aiwolf.client.lib.TemplateTalkFactory.TalkType;
 import org.aiwolf.client.lib.Topic;
 import org.aiwolf.client.lib.Utterance;
-import org.aiwolf.client.lib.TemplateTalkFactory.TalkType;
 import org.aiwolf.client.ui.res.AIWolfResource;
 import org.aiwolf.client.ui.res.JapaneseResource;
 import org.aiwolf.common.data.Agent;
@@ -44,7 +40,6 @@ import org.aiwolf.kajiClient.player.KajiRoleAssignPlayer;
 import org.aiwolf.server.AIWolfGame;
 import org.aiwolf.server.net.DirectConnectServer;
 import org.aiwolf.server.util.GameLogger;
-import org.aiwolf.server.util.MultiGameLogger;
 
 public class GameFrame extends JFrame implements GameLogger, ActionListener{
 
@@ -65,8 +60,8 @@ public class GameFrame extends JFrame implements GameLogger, ActionListener{
 		
 		List<Player> list = new ArrayList<Player>();
 		for(int i = 0; i < 13; i++){
-//			list.add(new InabaPlayer());
-			list.add(new KajiRoleAssignPlayer());
+			list.add(new InabaPlayer());
+//			list.add(new KajiRoleAssignPlayer());
 		}
 		String logDir = "./log";
 		
@@ -294,15 +289,15 @@ public class GameFrame extends JFrame implements GameLogger, ActionListener{
 			}
 			boolean isUpdated = infoPanel.updateTalk(gameInfo.getDay(), talk, TalkType.TALK);
 			if(isUpdated){
+				infoPanel.update(gameInfo);
 				lastTalk = talk;
 				stepActionPanel.waitForNext();
 //				waitSecond();
 			}
 		}
 
-		infoPanel.update(gameInfo);
 
-		for(int i = infoPanel.getLastWhisperIdx(); i < gameInfo.getWhisperList().size(); i++){
+		for(int i = infoPanel.getLastWhisperIdx()+1; i < gameInfo.getWhisperList().size(); i++){
 			Talk whisper = gameInfo.getWhisperList().get(i);
 
 			if(lastWhisper != null){
@@ -313,12 +308,12 @@ public class GameFrame extends JFrame implements GameLogger, ActionListener{
 			
 			boolean isUpdated = infoPanel.updateTalk(gameInfo.getDay(), whisper, TalkType.WHISPER);
 			if(isUpdated){
+				infoPanel.scrollToTail();
 				lastWhisper = whisper;
 //				waitSecond();
 				stepActionPanel.waitForNext();
 			}
 		}
-		infoPanel.scrollToTail();
 //		talkPanel.updateWhisper(gameInfo.getDay(), gameInfo.getWhisperList());
 	}
 

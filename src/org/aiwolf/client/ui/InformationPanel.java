@@ -195,12 +195,13 @@ public class InformationPanel extends JPanel {
 	 */
 	public boolean updateTalk(int day, Talk talk, TalkType talkType) {
 		if(!talk.getContent().equals(Talk.OVER) && !talk.getContent().equals(Talk.SKIP)){
+//		if(true){
 			talkPanel.addTalk(day, talk, talkType);
 			if(talkType == TalkType.TALK){
-				talkPanel.lastTalkIdx = talk.getIdx();
+				talkPanel.setLastTalkIdx(talk.getIdx()+1);
 			}
 			else{
-				talkPanel.lastWhisperIdx = talk.getIdx();
+				talkPanel.setLastWhisperIdx(talk.getIdx()+1);
 			}
 			JPanel tp = talkPanel.createTalkPanel(talk, talkType);
 			eventPanel.addCenterItem(tp);
@@ -283,7 +284,9 @@ public class InformationPanel extends JPanel {
 		
 		
 		int day = gameInfo.getDay();
-		talkPanel.addText(day, resource.dayStart(gameInfo.getDay()));
+
+		inform(resource.dayStart(gameInfo.getDay()), ACTION_COLOR);
+//		talkPanel.addText(day, resource.dayStart(gameInfo.getDay()));
 
 		///////////////////////////////////////////////////////
 		//Vote

@@ -277,11 +277,12 @@ public class GameFrame extends JFrame implements GameLogger, ActionListener{
 	Talk lastTalk;
 	Talk lastWhisper;
 	/**
-	 * 
+	 * update Talk
 	 * @param gameInfo
+	 * TODO Update時にTalk番号0が無視されている問題
 	 */
 	protected void updateTalk(GameInfo gameInfo) {
-		for(int i = infoPanel.getLastTalkIdx()+1; i < gameInfo.getTalkList().size(); i++){
+		for(int i = infoPanel.getLastTalkIdx(); i < gameInfo.getTalkList().size(); i++){
 			Talk talk = gameInfo.getTalkList().get(i);
 			
 			if(lastTalk != null && lastTalk.getAgent() == talk.getAgent() && lastTalk.getContent().equals(talk.getContent()) && lastTalk.getDay() == talk.getDay()){
@@ -406,8 +407,6 @@ public class GameFrame extends JFrame implements GameLogger, ActionListener{
 
 	@Override
 	public void flush() {
-		// TODO 自動生成されたメソッド・スタブ
-		
 	}
 
 	@Override

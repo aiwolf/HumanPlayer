@@ -19,6 +19,9 @@ import org.aiwolf.common.util.CalendarTools;
 import org.aiwolf.common.util.Pair;
 import org.aiwolf.server.AIWolfGame;
 import org.aiwolf.server.net.DirectConnectServer;
+import org.aiwolf.server.util.FileGameLogger;
+import org.aiwolf.server.util.GameLogger;
+import org.aiwolf.server.util.MultiGameLogger;
 
 /**
  * 役割を指定してスタートするStarter<br>
@@ -139,7 +142,9 @@ public class GUIRoleRequestStarter {
 		DirectConnectServer gameServer = new DirectConnectServer(playerMap);
 		GameSetting gameSetting = GameSetting.getDefaultGame(playerMap.size());
 		AIWolfGame game = new AIWolfGame(gameSetting, gameServer);
-		game.setGameLogger(new GameFrame(resource, game));
+		GameFrame gameFrame = new GameFrame(resource, game);
+		GameLogger logger = new MultiGameLogger(gameFrame, new FileGameLogger(logDir));
+		game.setGameLogger(logger);
 //		if(logDir != null){
 //			File logFile = new File(String.format("%s/contest%s.log", logDir, timeString));
 //			game.setLogFile(logFile);

@@ -36,7 +36,7 @@ public class HumanPlayerStarter {
 		String defaultClassName = InabaPlayer.class.getName();
 //		String logDir = null;
 		String logDir = "./log/";
-		int agentNum = 12;
+		int agentNum = 13;
 		
 		for(int i = 0; i < args.length; i++){
 			if(args[i].startsWith("-")){

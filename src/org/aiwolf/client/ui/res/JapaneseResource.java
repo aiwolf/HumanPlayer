@@ -105,9 +105,9 @@ public class JapaneseResource implements AIWolfResource {
 
 	
 	
-	List<String[]> agentResourceList;
+	protected List<String[]> agentResourceList;
 	
-	BidiMap<Agent, String> bidiMap;
+	protected BidiMap<Agent, String> bidiMap;
 	
 	public JapaneseResource() {
 		agentResourceList = Arrays.asList(agentResourceAry);
@@ -407,6 +407,9 @@ public class JapaneseResource implements AIWolfResource {
 	
 	@Override
 	public String dayStart(int day) {
+		if(day == 0){
+			return "村人による腎瘻対策会議が始まった．\n今日は，処刑の投票及び襲撃は行われない．\n占い師は占うことができる．";
+		}
 		return day+"日目の朝が来た";
 	}
 }

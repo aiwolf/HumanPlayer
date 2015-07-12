@@ -214,7 +214,7 @@ public class HumanPlayer extends JFrame implements Player, WaitListener{
 	protected void updateTalk(GameInfo gameInfo) {
 //		infoPanel.updateTalk(gameInfo.getDay(), gameInfo.getTalkList());
 //		infoPanel.updateWhisper(gameInfo.getDay(), gameInfo.getWhisperList());
-		for(int i = infoPanel.getLastTalkIdx()+1; i < gameInfo.getTalkList().size(); i++){
+		for(int i = infoPanel.getLastTalkIdx(); i < gameInfo.getTalkList().size(); i++){
 //			List<Talk> subList = gameInfo.getTalkList().subList(0, i+1);
 //			boolean isUpdated = infoPanel.updateTalk(gameInfo.getDay(), subList);
 			boolean isUpdated = infoPanel.updateTalk(gameInfo.getDay(), gameInfo.getTalkList().get(i), TalkType.TALK);
@@ -227,7 +227,7 @@ public class HumanPlayer extends JFrame implements Player, WaitListener{
 		}
 
 
-		for(int i = infoPanel.getLastWhisperIdx()+1; i < gameInfo.getWhisperList().size(); i++){
+		for(int i = infoPanel.getLastWhisperIdx(); i < gameInfo.getWhisperList().size(); i++){
 //			List<Talk> subList = gameInfo.getWhisperList().subList(0, i+1);
 //			boolean isUpdated = infoPanel.updateWhisper(gameInfo.getDay(), subList);
 			boolean isUpdated = infoPanel.updateTalk(gameInfo.getDay(), gameInfo.getWhisperList().get(i), TalkType.WHISPER);

@@ -105,8 +105,8 @@ public class TalkPanel extends JPanel {
 	
 	JPanel whisperPanel;
 	
-	int lastTalkIdx = 0;
-	int lastWhisperIdx = 0;
+	private int lastTalkIdx = 0;
+	private int lastWhisperIdx = 0;
 
 	AIWolfResource resource;
 	Map<Agent, ImageIcon> imageIconMap;
@@ -557,6 +557,20 @@ public class TalkPanel extends JPanel {
 
 	public int getLastWhisperIdx() {
 		return lastWhisperIdx;
+	}
+
+	/**
+	 * @param lastTalkIdx セットする lastTalkIdx
+	 */
+	public void setLastTalkIdx(int lastTalkIdx) {
+		this.lastTalkIdx = lastTalkIdx;
+	}
+
+	/**
+	 * @param lastWhisperIdx セットする lastWhisperIdx
+	 */
+	public void setLastWhisperIdx(int lastWhisperIdx) {
+		this.lastWhisperIdx = lastWhisperIdx;
 	}
 
 	

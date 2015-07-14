@@ -12,6 +12,7 @@ import java.util.Random;
 import org.aiwolf.client.ui.GameFrame;
 import org.aiwolf.client.ui.res.AIWolfResource;
 import org.aiwolf.client.ui.res.DefaultResource;
+import org.aiwolf.client.ui.res.JapaneseResource;
 import org.aiwolf.common.data.Player;
 import org.aiwolf.common.data.Role;
 import org.aiwolf.common.net.GameSetting;
@@ -143,6 +144,7 @@ public class GUIRoleRequestStarter {
 		GameSetting gameSetting = GameSetting.getDefaultGame(playerMap.size());
 		AIWolfGame game = new AIWolfGame(gameSetting, gameServer);
 		GameFrame gameFrame = new GameFrame(resource, game);
+		gameFrame.setResource(new JapaneseResource());
 		GameLogger logger = new MultiGameLogger(gameFrame, new FileGameLogger(logDir));
 		game.setGameLogger(logger);
 //		if(logDir != null){

@@ -270,17 +270,29 @@ public class DefaultResource implements AIWolfResource {
 
 	@Override
 	public String convert(Role role) {
-		return role.toString();
+		if(role != null){
+			return role.toString();
+		}else{
+			return null;
+		}
 	}
 
 	@Override
 	public String convert(Species species) {
-		return species.toString();
+		if(species != null){
+			return species.toString();
+		}else{
+			return null;
+		}
 	}
 
 	@Override
 	public String convert(Team team) {
-		return team.toString();
+		if(team != null){
+			return team.toString();
+		}else{
+			return null;
+		}
 	}
 
 	@Override
@@ -290,7 +302,11 @@ public class DefaultResource implements AIWolfResource {
 
 	@Override
 	public String convert(Topic topic) {
-		return topic.toString();
+		if(topic != null){
+			return topic.toString();
+		}else{
+			return null;
+		}
 	}
 
 	@Override

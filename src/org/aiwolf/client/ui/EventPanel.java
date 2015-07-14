@@ -2,8 +2,10 @@ package org.aiwolf.client.ui;
 
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
@@ -24,6 +26,7 @@ import javax.swing.JPanel;
 import javax.swing.SpringLayout;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.border.LineBorder;
 
 import org.aiwolf.client.ui.res.JapaneseResource;
 import org.aiwolf.common.data.Agent;
@@ -42,7 +45,7 @@ public class EventPanel extends JPanel{
 	Map<AgentPanel, Pair<Integer, Integer>> locationMap;
 	Map<Agent, AgentPanel> agentMap;
 
-	List<Pair<Agent, Agent>> arrowList;
+	Map<Pair<Agent, Agent>, Color> arrowMap;
 	
 	private JPanel centerPanel;
 	
@@ -88,7 +91,7 @@ public class EventPanel extends JPanel{
 		
 		locationMap = new LinkedHashMap<AgentPanel, Pair<Integer,Integer>>();
 		agentMap= new HashMap<>();
-		arrowList = new ArrayList<>();
+		arrowMap = new HashMap<>();
 	
 		setSize(AgentPanel.PANEL_HEIGHT*10,(int)(AgentPanel.PANEL_HEIGHT*3.1));
 		setPreferredSize(getSize());
@@ -231,9 +234,10 @@ public class EventPanel extends JPanel{
 //		g.setColor(Color.white);
 //		g.fillRect(0, 0, getWidth(), getHeight());
 
-		g.setColor(Color.RED);
-		synchronized (arrowList) {
-			for(Pair<Agent, Agent> agentPair:arrowList){
+		synchronized (arrowMap) {
+			for(Pair<Agent, Agent> agentPair:arrowMap.keySet()){
+				g.setColor(arrowMap.get(agentPair));
+
 				AgentPanel fromPanel = agentMap.get(agentPair.getKey());
 				AgentPanel toPanel = agentMap.get(agentPair.getValue());
 				
@@ -317,17 +321,19 @@ public class EventPanel extends JPanel{
 
 			Color c = component.getBackground();
 //			centerPanel.setBackground(new Color(c.getRed(), c.getGreen(), c.getBlue(), 128));
+//			component.setBorder(new LineBorder(Color.BLACK));
 			centerPanel.add(component, BorderLayout.CENTER);
 			component.setBackground(new Color(c.getRed(), c.getGreen(), c.getBlue(), 128));
-		
+			
 			lastComponent = component;
 
-			try {
-				Thread.sleep(20);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}	
+//			try {
+//				Thread.sleep(20);
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//			}	
 			centerPanel.setVisible(true);
+			centerPanel.repaint();
 		}
 //		arrowList.clear();
 		
@@ -339,9 +345,9 @@ public class EventPanel extends JPanel{
 	 * @param from
 	 * @param to
 	 */
-	public void addArrow(Agent from, Agent to){
-		arrowList.clear();
-		arrowList.add(new Pair<Agent, Agent>(from, to));
+	public void addArrow(Agent from, Agent to, Color color){
+//		arrowMap.clear();
+		arrowMap.put(new Pair<Agent, Agent>(from, to), color);
 		repaint();
 //		agentMap.get(from).setBackground(Color.CYAN);
 //		agentMap.get(to).setBackground(Color.ORANGE);
@@ -351,9 +357,15 @@ public class EventPanel extends JPanel{
 
 
 	public void clearArrow() {
-		arrowList.clear();
+		arrowMap.clear();
 //		centerPanel.setVisible(false);
 //		repaint();
+	}
+
+
+	public void clearCenterPanel() {
+		centerPanel.removeAll();
+		
 	}
 	
 }

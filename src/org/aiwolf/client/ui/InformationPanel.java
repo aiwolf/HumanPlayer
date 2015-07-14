@@ -214,12 +214,16 @@ public class InformationPanel extends JPanel {
 			if(talkType == TalkType.TALK){
 				switch(u.getTopic()){
 				case ATTACK:
+					eventPanel.addArrow(talk.getAgent(), u.getTarget(), Color.RED);
+					break;
 				case DIVINED:
 				case INQUESTED:
+					eventPanel.addArrow(talk.getAgent(), u.getTarget(), new Color(128,64,255));
+					break;
 				case GUARDED:
 				case VOTE:
 				case ESTIMATE:
-					eventPanel.addArrow(talk.getAgent(), u.getTarget());
+					eventPanel.addArrow(talk.getAgent(), u.getTarget(), Color.BLUE);
 					break;
 				default:
 					break;
@@ -326,15 +330,30 @@ public class InformationPanel extends JPanel {
 		//Attack
 		TreeSet<Vote> attackVoteSet = new TreeSet<>(voteComparator);
 		attackVoteSet.addAll(gameInfo.getAttackVoteList());
-		for(Vote attackVote:attackVoteSet){
-			if(gameInfo.getStatusMap().get(attackVote.getAgent()) == Status.ALIVE){
-				talkPanel.addText(day, resource.convertAttackVote(attackVote), WHISPER_COLOR);
+		if(!attackVoteSet.isEmpty()){
+			eventPanel.clearCenterPanel();
+			eventPanel.clearArrow();
+			for(Vote attackVote:attackVoteSet){
+				if(gameInfo.getStatusMap().get(attackVote.getAgent()) == Status.ALIVE){
+					eventPanel.addArrow(attackVote.getAgent(), attackVote.getTarget(), Color.RED);
+					talkPanel.addText(day, resource.convertAttackVote(attackVote), WHISPER_COLOR);
+				}
+			}
+			if(waitListener != null){
+				waitListener.waitForNext();
 			}
 		}
 		///////////////////////////////////////////////////////
 		//Guard
 		if(gameInfo.getGuardedAgent() != null){
-			inform(resource.convertGuarded(gameInfo.getGuardedAgent()), ACTION_COLOR, gameInfo.getGuardedAgent());
+			Agent guard = null;
+			for(Agent agent:gameInfo.getAliveAgentList()){
+				if(gameInfo.getRoleMap().get(agent) == Role.BODYGUARD){
+					guard = agent;
+					break;
+				}
+			}
+			inform(resource.convertGuarded(gameInfo.getGuardedAgent()), ACTION_COLOR, guard, gameInfo.getGuardedAgent());
 //			talkPanel.addAgentInformation(day, gameInfo.getGuardedAgent(), resource.convertGuarded(gameInfo.getGuardedAgent()));
 		}
 
@@ -379,11 +398,14 @@ public class InformationPanel extends JPanel {
 			JTextArea textArea = talkPanel.createTextPanel(day, text, color);
 			talkPanel.addItem(day, textArea);
 			JTextArea textArea2 = talkPanel.createTextPanel(day, text, color);
-			eventPanel.addCenterItem(textArea2);
+//			eventPanel.addCenterItem(textArea2);
+			JPanel centerPanel = new JPanel(new BorderLayout());
+			centerPanel.add(textArea2, BorderLayout.CENTER);
+			eventPanel.addCenterItem(centerPanel);
 		}
 
 		if(agent != null && target != null){
-			eventPanel.addArrow(agent, target);
+			eventPanel.addArrow(agent, target, Color.GREEN);
 		}
 		else{
 			eventPanel.clearArrow();
@@ -439,6 +461,21 @@ public class InformationPanel extends JPanel {
 		for(AgentPanel ap:agentPanelMap.values()){
 			ap.setStatus(gameInfo.getStatusMap().get(ap.getAgent()));
 		}
+	}
+
+	/**
+	 * @return resource
+	 */
+	public AIWolfResource getResource() {
+		return resource;
+	}
+
+	/**
+	 * @param resource セットする resource
+	 */
+	public void setResource(AIWolfResource resource) {
+		this.resource = resource;
+		talkPanel.setResource(resource);
 	}
 
 	

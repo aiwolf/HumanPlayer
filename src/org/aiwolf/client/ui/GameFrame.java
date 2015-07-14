@@ -279,7 +279,6 @@ public class GameFrame extends JFrame implements GameLogger, ActionListener{
 	/**
 	 * update Talk
 	 * @param gameInfo
-	 * TODO Update時にTalk番号0が無視されている問題
 	 */
 	protected void updateTalk(GameInfo gameInfo) {
 		for(int i = infoPanel.getLastTalkIdx(); i < gameInfo.getTalkList().size(); i++){
@@ -482,6 +481,21 @@ public class GameFrame extends JFrame implements GameLogger, ActionListener{
 //		else{
 //			game.setGameLogger(this);
 //		}
+	}
+
+	/**
+	 * @return resource
+	 */
+	public AIWolfResource getResource() {
+		return resource;
+	}
+
+	/**
+	 * @param resource セットする resource
+	 */
+	public void setResource(AIWolfResource resource) {
+		this.resource = resource;
+		infoPanel.setResource(resource);
 	}
 
 }

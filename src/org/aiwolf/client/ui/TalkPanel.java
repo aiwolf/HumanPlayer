@@ -477,16 +477,25 @@ public class TalkPanel extends JPanel {
 	 * Scroll Bar to Tail
 	 * @param scrollPane
 	 */
-	protected void scrollToTail(JScrollPane scrollPane) {
+	protected void scrollToTail(final JScrollPane scrollPane) {
 		if(scrollPane != null){
-			JScrollBar bar = scrollPane.getVerticalScrollBar();
-//			JViewport viewPort = scrollPane.getViewport();
-//			viewPort.set
-			if(bar != null){
-				bar.setValue(bar.getMaximum());
-//				scrollPane.repaint();
-//				System.err.println(bar.getMaximum()+"\t"+bar.getValue());
-			}
+			Thread th = new Thread(new Runnable() {
+				
+				@Override
+				public void run() {
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					scrollPane.repaint();
+					JScrollBar bar = scrollPane.getVerticalScrollBar();
+					if(bar != null){
+						bar.setValue(bar.getMaximum());
+					}	
+				}
+			});
+			th.start();
 		}
 	}
 
@@ -571,6 +580,20 @@ public class TalkPanel extends JPanel {
 	 */
 	public void setLastWhisperIdx(int lastWhisperIdx) {
 		this.lastWhisperIdx = lastWhisperIdx;
+	}
+
+	/**
+	 * @return resource
+	 */
+	public AIWolfResource getResource() {
+		return resource;
+	}
+
+	/**
+	 * @param resource セットする resource
+	 */
+	public void setResource(AIWolfResource resource) {
+		this.resource = resource;
 	}
 
 	

@@ -113,7 +113,9 @@ public class InformationPanel extends JPanel {
 		List<AgentPanel> panelList = new ArrayList<AgentPanel>();
 		for(Agent agent:new TreeSet<Agent>(gameInfo.getAgentList())){
 //			AgentPanel panel = new AgentPanel(agent, gameInfo.getRoleMap().get(agent), agent.equals(gameInfo.getAgent()), talkConverter);
-			AgentPanel agentPanel = new AgentImagePanel(agent, gameInfo.getRoleMap().get(agent), agent.equals(gameInfo.getAgent()), resource);
+		
+			boolean isPlayer = agent.equals(gameInfo.getAgent());
+			AgentPanel agentPanel = new AgentImagePanel(agent, gameInfo.getRoleMap().get(agent), isPlayer, resource);
 			panelList.add(agentPanel);
 			
 			eventPanel.add(agentPanel);
@@ -289,6 +291,7 @@ public class InformationPanel extends JPanel {
 		
 		int day = gameInfo.getDay();
 
+		eventPanel.clearArrow();
 		inform(resource.dayStart(gameInfo.getDay()), ACTION_COLOR);
 //		talkPanel.addText(day, resource.dayStart(gameInfo.getDay()));
 
@@ -296,33 +299,47 @@ public class InformationPanel extends JPanel {
 		//Vote
 		TreeSet<Vote> voteSet = new TreeSet<>(voteComparator);
 		voteSet.addAll(gameInfo.getVoteList());
-		for(Vote vote:voteSet){
-			Color color = HumanPlayer.TALK_COLOR;
-			if(vote.getAgent() == gameInfo.getAgent()){
-				color = PLAYER_COLOR;
+//		eventPanel.clearArrow();
+		if(!voteSet.isEmpty()){
+			eventPanel.clearCenterPanel();
+			for(Vote vote:voteSet){
+				eventPanel.addArrow(vote.getAgent(), vote.getTarget(), Color.RED);
+				Color color = HumanPlayer.TALK_COLOR;
+				if(vote.getAgent() == gameInfo.getAgent()){
+					color = PLAYER_COLOR;
+				}
+				else if(gameInfo.getRoleMap().get(vote.getAgent()) == gameInfo.getRole()){
+					color = FRIEND_COLOR;
+				}
+				
+				talkPanel.addText(day, resource.convertVote(vote), color);
 			}
-			else if(gameInfo.getRoleMap().get(vote.getAgent()) == gameInfo.getRole()){
-				color = FRIEND_COLOR;
+			if(waitListener != null){
+				waitListener.waitForNext();
 			}
-			
-			talkPanel.addText(day, resource.convertVote(vote), color);
 		}
 		if(gameInfo.getExecutedAgent() != null){
 			inform(resource.convertExecuted(gameInfo.getExecutedAgent()), ACTION_COLOR, gameInfo.getExecutedAgent());
 		}
-
+		eventPanel.clearArrow();
+		
 		///////////////////////////////////////////////////////
 		//Divine Medium
 		if(gameInfo.getDivineResult() != null){
-			Agent agent = gameInfo.getDivineResult().getAgent();
+			Agent seer = gameInfo.getDivineResult().getAgent();
 			Agent target = gameInfo.getDivineResult().getTarget();
 			
-			inform(resource.convertDivined(gameInfo.getDivineResult()), ACTION_COLOR, agent, target);
+			if(gameInfo.getStatusMap().get(seer) == Status.ALIVE){
+				inform(resource.convertDivined(gameInfo.getDivineResult()), ACTION_COLOR, seer, target);
+			}
 		}
 		if(gameInfo.getMediumResult() != null){
 			Agent agent = gameInfo.getMediumResult().getAgent();
 			Agent target = gameInfo.getMediumResult().getTarget();
-			inform(resource.convertMedium(gameInfo.getMediumResult()), ACTION_COLOR, agent, target);
+			
+			if(gameInfo.getStatusMap().get(agent) == Status.ALIVE){
+				inform(resource.convertMedium(gameInfo.getMediumResult()), ACTION_COLOR, agent, target);
+			}
 //			talkPanel.addAgentInformation(day, target, resource.convertMedium(gameInfo.getMediumResult()));
 		}
 		
@@ -353,7 +370,9 @@ public class InformationPanel extends JPanel {
 					break;
 				}
 			}
-			inform(resource.convertGuarded(gameInfo.getGuardedAgent()), ACTION_COLOR, guard, gameInfo.getGuardedAgent());
+			if(gameInfo.getStatusMap().get(guard) == Status.ALIVE){
+				inform(resource.convertGuarded(gameInfo.getGuardedAgent()), ACTION_COLOR, guard, gameInfo.getGuardedAgent());
+			}
 //			talkPanel.addAgentInformation(day, gameInfo.getGuardedAgent(), resource.convertGuarded(gameInfo.getGuardedAgent()));
 		}
 
@@ -408,7 +427,7 @@ public class InformationPanel extends JPanel {
 			eventPanel.addArrow(agent, target, Color.GREEN);
 		}
 		else{
-			eventPanel.clearArrow();
+//			eventPanel.clearArrow();
 		}
 		if(waitListener != null){
 			waitListener.waitForNext();

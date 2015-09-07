@@ -13,6 +13,7 @@ import org.aiwolf.client.ui.res.AIWolfResource;
 import org.aiwolf.common.data.Agent;
 import org.aiwolf.common.data.Role;
 import org.aiwolf.common.data.Status;
+import org.aiwolf.common.data.Team;
 
 public class AgentPanel extends JPanel {
 	
@@ -22,12 +23,13 @@ public class AgentPanel extends JPanel {
 
 	private static final Color PLAYER_ALIVE = HumanPlayer.PLAYER_COLOR;
 
-	private static final Color WOLF_ALIVE = Color.GRAY;
+	private static final Color WOLF_ALIVE = new Color(240, 240, 96);
 
+	private static final Color SKILLED_ALIVE = new Color(255, 220, 160);
 
-	private static final Color NON_PLAYER_DEAD = new Color(196, 196, 196);
+	private static final Color NON_PLAYER_DEAD = new Color(128, 128, 128);
 
-	private static final Color FRIEND_DEAD = new Color(196, 196, 128);
+	private static final Color FRIEND_DEAD = new Color(128, 128, 64);
 
 	private static final Color PLAYER_DEAD = new Color(196, 196, 64);
 	
@@ -46,6 +48,7 @@ public class AgentPanel extends JPanel {
 
 	protected Agent agent;
 	protected Role role;
+	protected Status status;
 	
 	protected JLabel nameLabel;
 	protected JLabel statusLabel;
@@ -132,6 +135,7 @@ public class AgentPanel extends JPanel {
 	 * @param status
 	 */
 	public void setStatus(Status status) {
+		this.status = status;
 		statusLabel.setText(status.toString());
 		if(status == Status.DEAD){
 			if(isPlayer){
@@ -171,6 +175,16 @@ public class AgentPanel extends JPanel {
 	public void setRole(Role role){
 		if(role != null){
 			roleLabel.setText(resource.convert(role));
+			if(role.getTeam() == Team.WEREWOLF){
+				roleLabel.setForeground(Color.RED);
+			}
+				
+			if(role == Role.WEREWOLF && status == Status.ALIVE){
+				setBackground(WOLF_ALIVE);
+			}
+			else if(role != Role.VILLAGER && status == Status.ALIVE){
+				setBackground(SKILLED_ALIVE);
+			}
 		}
 	}
 

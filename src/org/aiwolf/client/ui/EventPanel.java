@@ -323,7 +323,7 @@ public class EventPanel extends JPanel{
 //			centerPanel.setBackground(new Color(c.getRed(), c.getGreen(), c.getBlue(), 128));
 //			component.setBorder(new LineBorder(Color.BLACK));
 			centerPanel.add(component, BorderLayout.CENTER);
-			component.setBackground(new Color(c.getRed(), c.getGreen(), c.getBlue(), 128));
+			component.setBackground(new Color(c.getRed(), c.getGreen(), c.getBlue(), 228));
 			
 			lastComponent = component;
 

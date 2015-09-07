@@ -18,7 +18,7 @@ class NextButtonPanel extends JPanel implements ActionListener, WaitListener {
 	protected JButton nextButton;
 	protected JButton skipAllButton;
 	protected JPanel stepActionPanel;
-
+	protected boolean isAlwaysAuto = false;
 	
 	public NextButtonPanel(){
 
@@ -40,7 +40,7 @@ class NextButtonPanel extends JPanel implements ActionListener, WaitListener {
 		add(skipAllButton);
 		step = false;
 		skip = false;
-		
+		isAlwaysAuto = false;
 //		add(stepActionPanel);
 //		setVisible(true);
 	}
@@ -72,6 +72,9 @@ class NextButtonPanel extends JPanel implements ActionListener, WaitListener {
 	 * @param setAuto
 	 */
 	protected void auto(boolean setAuto) {
+		if(isAlwaysAuto){
+			setAuto = true;
+		}
 		if(!setAuto){
 			skip = false;
 			step = false;
@@ -114,5 +117,11 @@ class NextButtonPanel extends JPanel implements ActionListener, WaitListener {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void setAlwaysAuto(boolean b) {
+		isAlwaysAuto = true;
+		waitTime = 50;
+		auto(true);
 	}
 }

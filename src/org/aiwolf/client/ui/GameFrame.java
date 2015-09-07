@@ -29,6 +29,7 @@ import org.aiwolf.client.ui.res.AIWolfResource;
 import org.aiwolf.client.ui.res.JapaneseResource;
 import org.aiwolf.common.data.Agent;
 import org.aiwolf.common.data.Player;
+import org.aiwolf.common.data.Role;
 import org.aiwolf.common.data.Species;
 import org.aiwolf.common.data.Status;
 import org.aiwolf.common.data.Talk;
@@ -38,6 +39,7 @@ import org.aiwolf.common.net.GameSetting;
 import org.aiwolf.common.util.CalendarTools;
 import org.aiwolf.kajiClient.player.KajiRoleAssignPlayer;
 import org.aiwolf.server.AIWolfGame;
+import org.aiwolf.server.GameData;
 import org.aiwolf.server.net.DirectConnectServer;
 import org.aiwolf.server.util.GameLogger;
 
@@ -134,7 +136,7 @@ public class GameFrame extends JFrame implements GameLogger, ActionListener{
 	protected boolean isInitialized;
 	
 	protected AIWolfGame game;
-	
+//	protected GameData gameData;
 	protected InformationPanel infoPanel;
 //	protected JPanel agentPanel;
 	protected UserActionPanel userActionPanel;
@@ -172,7 +174,13 @@ public class GameFrame extends JFrame implements GameLogger, ActionListener{
 	 * @game 
 	 */
 	public GameFrame(AIWolfResource resource, AIWolfGame game){
+//		this(resource, game.getGameData(), game.getGameSetting());
+//	}
+//
+//	public GameFrame(AIWolfResource resource, GameData gameData, GameSetting gameSetting){
 		setGame(game);
+//		this.gameData = gameData;
+		this.gameSetting = gameSetting;
 		this.resource = resource;
 		
 		isInitialized = false;
@@ -265,6 +273,12 @@ public class GameFrame extends JFrame implements GameLogger, ActionListener{
 			if(u.getTopic() == Topic.COMINGOUT){
 				infoPanel.setComingOut(talk.getAgent(), u.getRole());
 			}
+			else if(u.getTopic() == Topic.DIVINED){
+				infoPanel.setComingOut(talk.getAgent(), Role.SEER);
+			}
+			else if(u.getTopic() == Topic.INQUESTED){
+				infoPanel.setComingOut(talk.getAgent(), Role.MEDIUM);
+			}
 		}
 		
 		this.gameInfo = gameInfo;
@@ -331,65 +345,14 @@ public class GameFrame extends JFrame implements GameLogger, ActionListener{
 //		userActionPanel.dayStart(gameInfo);
 	}
 //
-//	/**
-//	 * Wait until next button is pushed
-//	 * 
-//	 */
-//	public void waitForNext() {
-//		stepActionPanel.waitForNext();
-////		if(skip){
-////			waitSecond();
-////			return;
-////		}
-////		step = false;
-////		nextButton.setEnabled(true);
-////		while(!step){
-////			try {
-////				Thread.sleep(10);
-////			} catch (InterruptedException e) {
-////				e.printStackTrace();
-////			}
-////		}
-////		step = false;
-////		nextButton.setEnabled(false);
-//	}
-//
-//	protected void waitSecond(){
-//		stepActionPanel.waitSecond();
-//
-////		try {
-////			Thread.sleep(waitTime);
-////		} catch (InterruptedException e) {
-////			e.printStackTrace();
-////		}
-//	}
-//	
-//
-//	/**
-//	 * @param setAuto
-//	 */
-//	private void auto(boolean setAuto) {
-//		stepActionPanel.auto(setAuto);
-////		if(!setAuto){
-////			skip = false;
-////			step = false;
-////			waitTime = DEFAULT_WAIT_TIME;
-////			autoButton.setText("Auto");
-////		}
-////		else{
-////			step = true;
-////			skip = true;
-////			autoButton.setText("Stop");
-////		}
-//	}
-//	
-
 	int lastDay = -1;
 	@Override
 	public void log(String log) {
 		GameInfo gameInfo = game.getGameData().getGameInfo();
+		GameSetting gameSetting = game.getGameSetting();
+//		GameInfo gameInfo = gameData.getGameInfo();
 		if(!isInitialized){
-			initialize(gameInfo, game.getGameSetting());
+			initialize(gameInfo, gameSetting);
 			isInitialized = true;
 		}
 
@@ -475,6 +438,7 @@ public class GameFrame extends JFrame implements GameLogger, ActionListener{
 	 */
 	public void setGame(AIWolfGame game) {
 		this.game = game;
+//		this.gameData = game.getGameData();
 //		if(game.getGameLogger() != null){
 //			game.setGameLogger(new MultiGameLogger(game.getGameLogger(), this));
 //		}
@@ -496,6 +460,11 @@ public class GameFrame extends JFrame implements GameLogger, ActionListener{
 	public void setResource(AIWolfResource resource) {
 		this.resource = resource;
 		infoPanel.setResource(resource);
+	}
+
+	public void setAlwaysAuto(boolean b) {
+		stepActionPanel.setAlwaysAuto(b);
+		
 	}
 
 }
